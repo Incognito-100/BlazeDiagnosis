@@ -28,6 +28,7 @@ Successfully completed the job status workflow review. The deliverable covers:
 - **FSM Transition Matrix:** Documented all allowed transitions (`DRAFT → IN_PROGRESS → WAITING_FOR_PARTS / COMPLETED`) and confirmed `COMPLETED` as a terminal state.  
 - **Implementation Draft:** Drafted the `updateStatus` method in `jobs.service.ts` with FSM guard clauses, error messaging for illegal transitions, and history trail appending.  
 - **Design Decisions:** Documented why the FSM guard belongs in the service layer (not the validator) and why `WAITING_FOR_PARTS` can resolve to either `IN_PROGRESS` or `COMPLETED`.  
+- **CRUD PLAN** We finnished the crud plan about Vehicle Mangement
 
 ---
 
