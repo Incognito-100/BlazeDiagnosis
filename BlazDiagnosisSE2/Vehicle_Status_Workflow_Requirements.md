@@ -34,10 +34,16 @@
 
 
 
+
+
 ## 5. Status Workflow 
 - **Rule:** Status mirrors the car’s progress in the shop.  
-- **Constraints:** Updates only via `PATCH /api/jobs/:id/status`.  
-  Flow: `DRAFT ➔ IN_PROGRESS ➔ WAITING_FOR_PARTS ➔ COMPLETED`.  
-- **Safeguard:** Every change logs to `JobStatusHistory` with  
-  `fromStatus`, `toStatus`, `changedByUserId`, and `createdAt`.  
-
+- **Constraints:** Updates only via `PATCH /api/jobs/:id/status`. 
+  Enforces a strict, non-linear State Machine validation matrix to prevent illegal state jumps.
+- **Allowed Transitions Matrix:**
+  * `DRAFT` ➔ Can only move to `IN_PROGRESS`
+  * `IN_PROGRESS` ➔ Can move to `WAITING_FOR_PARTS` or `COMPLETED`
+  * `WAITING_FOR_PARTS` ➔ Can move back to `IN_PROGRESS` or directly to `COMPLETED`
+  * `COMPLETED` ➔ Terminal state. No further transitions allowed; job is locked.
+- **Safeguard:** Every change logs to `JobStatusHistory` via the repository layer with:
+  `id` (jsh_prefix), `jobId`, `fromStatus`, `toStatus`, `changedByUserId`, and `createdAt`.
