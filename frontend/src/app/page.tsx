@@ -8,7 +8,8 @@ import { QuotesPanel } from '../features/quotes/components/QuotesPanel';
 export default function HomePage() {
   return (
     <AppShell title="Vehicle Service Platform Starter">
-      <div style={{ display: 'grid', gap: 24 }}>
+      {/* The div was  using inline style instead of Tailwind CSS.*/}
+      <div className="grid gap-6">
         <DashboardPanel />
         <CustomersPanel />
         <VehiclesPanel />
