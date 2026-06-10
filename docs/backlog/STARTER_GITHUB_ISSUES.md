@@ -98,3 +98,35 @@ Use these as starter issues for the first implementation phase.
 - Define create vehicle request
 - Define vehicle response
 - Add error response examples
+
+## Issue 9: Job card status workflow & quote approval (recommended first feature)
+
+**Group:** Software Engineering 2 / Software Development 2
+
+### Observations
+
+- Backend contains a `prisma/schema.prisma` with `JobStatus` and `QuoteStatus` enums and full models for `Job`, `Quote`, `Customer`, `Vehicle`, etc.
+- Current repository implementations under `backend/src/modules/*/repositories` use an in-memory store (`shared/store/in-memory-db`) for data access; Prisma is present for production seeding and migration scripts.
+- API contracts in `docs/api-contracts.md` already specify endpoints for job status updates, quote creation, public quote approve/reject flows, and job lifecycle actions.
+
+### Proposed work & clarifications needed
+
+- Implement job status transition endpoints and enforce allowed transitions (e.g., QUOTATION_IN_PROGRESS -> AWAITING_CUSTOMER_APPROVAL -> APPROVED -> IN_PROGRESS -> COMPLETED -> INVOICED -> PAID -> CLOSED).
+- Implement quote lifecycle endpoints: create quote, send (mark SENT), public token access, public approve/reject which should update `Quote.status` and related `Job.status` where applicable.
+- Ensure status history is recorded (`JobStatusHistory`) whenever a job status changes.
+- Decide and document which transitions require notifications to customers (email/WhatsApp) and who can trigger them (role-based checks).
+- Plan migration from in-memory repositories to Prisma-backed repositories (or adapter pattern) for persistence; identify which repository implementations need to be added or swapped.
+
+### Acceptance criteria / Deliverables
+
+- API endpoints implemented and covered by basic tests: job status update, create/send quote, public quote approve/reject.
+- `JobStatusHistory` entries created on status change.
+- Role checks applied for status-changing actions (Service Advisor vs Mechanic vs Admin distinctions documented).
+- Short migration guide or adapter showing how to switch repositories from in-memory to Prisma client for these modules.
+
+### Notes for assignee
+
+- Start by reviewing `backend/prisma/schema.prisma`, `backend/prisma/seed.ts`, and the existing repositories in `backend/src/modules/{jobs,quotes,customers,vehicles}`.
+- Use `docs/api-contracts.md` as the API surface contract; propose any missing fields required by the frontend.
+- If time-limited, prioritize: (1) status update endpoint with history, (2) quote create/send + public approve flow, (3) notifications hooks.
+
