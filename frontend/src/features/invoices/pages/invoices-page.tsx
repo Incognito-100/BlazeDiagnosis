@@ -1,3 +1,9 @@
+import { InvoicesPanel } from "../components/InvoicesPanel"
+
 export default function InvoicesPage() {
-  return <div>Invoices feature placeholder</div>;
+  return (
+    <div>
+        <InvoicesPanel />
+    </div>
+  );
 }
