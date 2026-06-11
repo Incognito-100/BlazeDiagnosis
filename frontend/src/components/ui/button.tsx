@@ -43,8 +43,9 @@ const buttonVariants = cva(
 
 function Button({
   className,
-  variant = "default",
-  size = "default",
+  {/*The cva defaultVariants already handles variant default, so we should remove it*/}
+  variant,
+  size,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
@@ -55,6 +56,6 @@ function Button({
     />
   )
 }
-
-export { Button, buttonVariants }
+{/*Anyone using this component from another file cannot easily type their props without re-importing everything manually*/}
+export type ButtonProps = ButtonPrimitive.props & VariantProps<typeof Button, buttonVariants>;
   
