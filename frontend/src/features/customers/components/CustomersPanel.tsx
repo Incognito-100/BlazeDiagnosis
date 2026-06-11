@@ -94,63 +94,64 @@ export function CustomersPanel() {
   }
 
   return (
-    <section style={{ display: 'grid', gap: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+    <section className="grid gap-4 rounded-xl bg-gradient-to-bl from-[#08101c] via-[#0f1f53] to-[#0d1728] p-8">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2>Customers</h2>
-          <p>Create, edit, archive, and search customer records.</p>
+          <h2 className="text-xl font-bold  text-white">Customers</h2>
+          <p className="text-gray-400">Create, edit, archive, and search customer records.</p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="flex gap-2">
           <input
+            className="rounded border border-gray-300 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search name, phone, email, company"
           />
-          <button type="button" onClick={() => void loadCustomers(search || undefined)} disabled={loading}>Search</button>
-          <button type="button" onClick={() => { setSearch(''); void loadCustomers(); }} disabled={loading}>Clear</button>
+          <button className="rounded bg-blue-600 px-4 py-1.5 font-medium text-white hover:bg-blue-700 disabled:opacity-50" type="button" onClick={() => void loadCustomers(search || undefined)} disabled={loading}>Search</button>
+          <button className="rounded border border-gray-300 bg-white px-4 py-1.5 font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50" type="button" onClick={() => { setSearch(''); void loadCustomers(); }} disabled={loading}>Clear</button>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 420px) 1fr', gap: 16 }}>
-        <form onSubmit={(event) => void handleSubmit(event)} style={{ border: '1px solid #e5e7eb', padding: 16, borderRadius: 12, display: 'grid', gap: 10 }}>
-          <strong>{heading}</strong>
-          <input value={form.fullName} onChange={(event) => setForm((current) => ({ ...current, fullName: event.target.value }))} placeholder="Full name" required />
-          <input value={form.mobileNumber} onChange={(event) => setForm((current) => ({ ...current, mobileNumber: event.target.value }))} placeholder="Mobile number" required />
-          <input value={form.alternateNumber || ''} onChange={(event) => setForm((current) => ({ ...current, alternateNumber: event.target.value }))} placeholder="Alternate number" />
-          <input value={form.email || ''} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} placeholder="Email" />
-          <input value={form.companyName || ''} onChange={(event) => setForm((current) => ({ ...current, companyName: event.target.value }))} placeholder="Company name" />
-          <input value={form.address || ''} onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))} placeholder="Address" />
-          <select value={form.preferredCommunicationChannel || 'EMAIL'} onChange={(event) => setForm((current) => ({ ...current, preferredCommunicationChannel: event.target.value as CustomerCreatePayload['preferredCommunicationChannel'] }))}>
+      <div className="grid grid-cols-[minmax(320px,420px)_1fr] gap-4">
+        <form className="grid gap-2.5 rounded-xl border border-[#3B82F6] font-extrabold border-opacity-45 p-4 bg-gradient-to-r from-[#2563eb] to-[#38bdf8]" onSubmit={(event) => void handleSubmit(event)}>
+          <strong className="text-lg font-bold  text-white">{heading}</strong>
+          <input className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value={form.fullName} onChange={(event) => setForm((current) => ({ ...current, fullName: event.target.value }))} placeholder="Full name" required />
+          <input className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value={form.mobileNumber} onChange={(event) => setForm((current) => ({ ...current, mobileNumber: event.target.value }))} placeholder="Mobile number" required />
+          <input className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value={form.alternateNumber || ''} onChange={(event) => setForm((current) => ({ ...current, alternateNumber: event.target.value }))} placeholder="Alternate number" />
+          <input className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value={form.email || ''} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} placeholder="Email" />
+          <input className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value={form.companyName || ''} onChange={(event) => setForm((current) => ({ ...current, companyName: event.target.value }))} placeholder="Company name" />
+          <input className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value={form.address || ''} onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))} placeholder="Address" />
+          <select className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={form.preferredCommunicationChannel || 'EMAIL'} onChange={(event) => setForm((current) => ({ ...current, preferredCommunicationChannel: event.target.value as CustomerCreatePayload['preferredCommunicationChannel'] }))}>
             <option value="EMAIL">Email</option>
             <option value="SMS">SMS</option>
             <option value="WHATSAPP">WhatsApp</option>
           </select>
-          <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <input type="checkbox" checked={form.marketingConsent} onChange={(event) => setForm((current) => ({ ...current, marketingConsent: event.target.checked }))} />
+          <label className="flex items-center gap-2 text-sm  text-white">
+            <input className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" type="checkbox" checked={form.marketingConsent} onChange={(event) => setForm((current) => ({ ...current, marketingConsent: event.target.checked }))} />
             Marketing consent
           </label>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button type="submit">{editingId ? 'Save changes' : 'Create customer'}</button>
-            {editingId ? <button type="button" onClick={resetForm}>Cancel</button> : null}
+          <div className="flex gap-2 pt-2">
+            <button className="w-full rounded-lg bg-gradient-to-bl from-[#08101c] via-[#0f1f53] to-[#0d1728]  px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-all duration-350 hover:-translate-y-1" type="submit">{editingId ? 'Save changes' : 'Create customer'}</button>
+            {editingId ? <button className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition" type="button" onClick={resetForm}>Cancel</button> : null}
           </div>
         </form>
 
-        <div style={{ display: 'grid', gap: 12 }}>
-          {loading ? <div style={{ border: '1px solid #e5e7eb', padding: 16, borderRadius: 12 }}>Loading customers…</div> : null}
-          {!loading && customers.length === 0 ? <div style={{ border: '1px solid #e5e7eb', padding: 16, borderRadius: 12 }}>No customers found.</div> : null}
+        <div className="grid gap-3 auto-rows-start">
+          {loading ? <div className="rounded-xl border border-gray-200 p-4 text-center text-gray-500">Loading customers…</div> : null}
+          {!loading && customers.length === 0 ? <div className="rounded-xl border border-gray-200 p-4 text-center text-gray-400">No customers found.</div> : null}
           {customers.map((customer) => (
-            <div key={customer.id} style={{ border: '1px solid #e5e7eb', padding: 16, borderRadius: 12, display: 'grid', gap: 6 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>
-                <strong>{customer.fullName}</strong>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button type="button" onClick={() => startEdit(customer)}>Edit</button>
-                  <button type="button" onClick={() => void handleArchive(customer.id)}>Archive</button>
+            <div key={customer.id} className="grid gap-1.5 rounded-xl border border-gray-200 p-4 bg-white shadow-sm">
+              <div className="flex items-center justify-between gap-3">
+                <strong className="text-base font-semibold text-gray-900">{customer.fullName}</strong>
+                <div className="flex gap-2">
+                  <button className="text-sm font-medium text-blue-600 hover:text-blue-800" type="button" onClick={() => startEdit(customer)}>Edit</button>
+                  <button className="text-sm font-medium text-red-600 hover:text-red-800" type="button" onClick={() => void handleArchive(customer.id)}>Archive</button>
                 </div>
               </div>
-              <div>{customer.mobileNumber}</div>
-              <div>{customer.email || 'No email'}</div>
-              <div>{customer.companyName || 'Private client'}</div>
-              <div>Preferred channel: {customer.preferredCommunicationChannel || 'EMAIL'}</div>
+              <div className="text-sm text-gray-500">{customer.mobileNumber}</div>
+              <div className="text-sm text-gray-500">{customer.email || 'No email'}</div>
+              <div className="text-sm text-gray-500">{customer.companyName || 'Private client'}</div>
+              <div className="mt-1 text-xs font-medium inline-block text-gray-400">Preferred channel: {customer.preferredCommunicationChannel || 'EMAIL'}</div>
             </div>
           ))}
         </div>

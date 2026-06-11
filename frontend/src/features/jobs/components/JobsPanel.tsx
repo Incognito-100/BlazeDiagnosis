@@ -24,14 +24,14 @@ const demoJob: JobRecord = {
 
 export function JobsPanel() {
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <div style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 16 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <strong>{demoJob.referenceNumber}</strong>
+    <div className="grid gap-4">
+      <div className="rounded-xl bg-gradient-to-bl from-[#08101c] via-[#0f1f53] to-[#0d1728] p-4">
+        <div className="flex items-center justify-between">
+          <strong className="text-base font-semibold text-white">{demoJob.referenceNumber}</strong>
           <StatusBadge value={demoJob.status} />
         </div>
-        <p>{demoJob.customerComplaint}</p>
-        <p>{demoJob.diagnosisSummary}</p>
+        <p className="mt-2 text-sm text-gray-400">{demoJob.customerComplaint}</p>
+        <p className="mt-2 text-sm text-gray-400">{demoJob.diagnosisSummary}</p>
       </div>
       <Timeline
         items={(demoJob.statusHistory ?? []).map((item) => ({

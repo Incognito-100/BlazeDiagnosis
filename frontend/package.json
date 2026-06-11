@@ -9,9 +9,14 @@
     "lint": "echo \"Add linter\""
   },
   "dependencies": {
-    "next": "15.0.0",
+    "@base-ui/react": "^1.5.0",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^1.17.0",
+    "next": "^15.5.19",
+    "radix-ui": "^1.5.0",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

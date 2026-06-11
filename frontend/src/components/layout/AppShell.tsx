@@ -7,10 +7,10 @@ interface AppShellProps {
 
 export function AppShell({ title = 'Vehicle Service Platform', children }: AppShellProps) {
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', padding: 24, maxWidth: 1200, margin: '0 auto' }}>
-      <header style={{ marginBottom: 24 }}>
-        <h1 style={{ marginBottom: 8 }}>{title}</h1>
-        <p style={{ color: '#555' }}>Starter operational shell for service stations, customers, and quotes.</p>
+    <div className='font-sans p-6 max-w-[1200px] mx-auto'>
+      <header className="mb-6">
+        <h1 className="mb-2">{title}</h1>
+        <p className="text-[#555]">Starter operational shell for service stations, customers, and quotes.</p>
       </header>
       <section>{children}</section>
     </div>

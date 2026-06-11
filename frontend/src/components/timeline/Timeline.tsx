@@ -6,11 +6,11 @@ interface TimelineItem {
 
 export function Timeline({ items = [] }: { items?: TimelineItem[] }) {
   return (
-    <div style={{ display: 'grid', gap: 12 }}>
+    <div className="grid gap-3">
       {items.map((item) => (
-        <div key={item.id} style={{ borderLeft: '3px solid #d0d7de', paddingLeft: 12 }}>
+        <div key={item.id} className="border-l-[3px] border-[#d0d7de] pl-3">
           <strong>{item.title}</strong>
-          {item.subtitle ? <div style={{ color: '#555' }}>{item.subtitle}</div> : null}
+          {item.subtitle ? <div className="text-[#555]">{item.subtitle}</div> : null}
         </div>
       ))}
     </div>

@@ -8,16 +8,20 @@ const cards = [
 
 export function DashboardPanel() {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
-      {cards.map((card) => (
-        <div key={card.title} style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 16 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <strong>{card.title}</strong>
-            <StatusBadge value={card.status} />
+    <div className=" rounded-xl bg-gradient-to-bl from-[#08101c] via-[#0f1f53] to-[#0d1728] p-8">
+      <div className="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-4">
+        {cards.map((card) => (
+          <div key={card.title} className="rounded-xl border border-[#3B82F6] font-extrabold border-opacity-45 p-4 bg-gradient-to-r from-[#2563eb] to-[#38bdf8] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <div className="flex items-center justify-between">
+              {/*<strong className="font-bold text-[18px]">{card.title}</strong> With Black text*/}
+              <strong className="font-semibold text-[16px] text-slate-200 tracking-wide">{card.title}</strong>
+              <StatusBadge value={card.status} />
+            </div>
+            {/*<div className="mt-4 text-[30px] font-extrabold text-[#DBEAFE]">{card.value}</div>*/}
+            <div className="mt-5 text-[32px] font-bold text-white tracking-tight">{card.value}</div>
           </div>
-          <div style={{ fontSize: 28, marginTop: 12 }}>{card.value}</div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
