@@ -2,9 +2,30 @@ import { StatusBadge } from '@/components/status';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const parts = [
-  { id: 1, sku: 'SM-001', name: 'Starter Motor', category: 'Engine', quantity: 10, status: 'In Stock' },
-  { id: 2, sku: 'AL-001', name: 'Alternator', category: 'Electrical', quantity: 5, status: 'Low Stock' },
-  { id: 3, sku: 'BP-001', name: 'Brake Pads', category: 'Chassis', quantity: 0, status: 'Out of Stock' },
+  {
+    id: 1,
+    sku: 'SM-001',
+    name: 'Starter Motor',
+    category: 'Engine',
+    quantity: 10,
+    status: 'In Stock',
+  },
+  {
+    id: 2,
+    sku: 'AL-001',
+    name: 'Alternator',
+    category: 'Electrical',
+    quantity: 5,
+    status: 'Low Stock',
+  },
+  {
+    id: 3,
+    sku: 'BP-001',
+    name: 'Brake Pads',
+    category: 'Chassis',
+    quantity: 0,
+    status: 'Out of Stock',
+  },
 ];
 
 export function PartsPanel() {
@@ -14,7 +35,9 @@ export function PartsPanel() {
         <h2 className="text-xl font-semibold" id="mvp-parts-title">
           Parts management
         </h2>
-        <p className="text-sm text-neutral-600">Demo inventory cards for future stock and supplier workflows.</p>
+        <p className="text-sm text-neutral-600">
+          Demo inventory cards for future stock and supplier workflows.
+        </p>
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {parts.map((part) => (

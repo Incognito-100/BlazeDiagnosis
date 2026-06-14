@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Supplier orders</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Accepted parts orders awaiting dispatch or delivery.</p>
+          <p className="text-sm text-neutral-600">
+            Accepted parts orders awaiting dispatch or delivery.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

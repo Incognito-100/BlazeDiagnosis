@@ -24,7 +24,9 @@ export function JobsPanel() {
         <h2 className="text-xl font-semibold" id="mvp-jobs-title">
           Job workflow
         </h2>
-        <p className="text-sm text-neutral-600">Demo job-card state and status timeline.</p>
+        <p className="text-sm text-neutral-600">
+          Demo job-card state and status timeline.
+        </p>
       </div>
       <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">
@@ -32,7 +34,9 @@ export function JobsPanel() {
           <StatusBadge value={demoJob.status} />
         </CardHeader>
         <CardContent className="grid gap-3">
-          <p className="text-sm text-neutral-600">{demoJob.customerComplaint}</p>
+          <p className="text-sm text-neutral-600">
+            {demoJob.customerComplaint}
+          </p>
           <p className="text-sm text-neutral-600">{demoJob.diagnosisSummary}</p>
           <Timeline
             items={demoJob.statusHistory.map((item) => ({

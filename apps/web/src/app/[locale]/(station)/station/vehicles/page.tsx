@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Vehicles</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Tenant vehicle records and service history.</p>
+          <p className="text-sm text-neutral-600">
+            Tenant vehicle records and service history.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

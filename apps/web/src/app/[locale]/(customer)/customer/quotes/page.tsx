@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Customer quotes</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Quotes awaiting item-level approval and quote history.</p>
+          <p className="text-sm text-neutral-600">
+            Quotes awaiting item-level approval and quote history.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Usage</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Platform-level usage metrics and adoption signals.</p>
+          <p className="text-sm text-neutral-600">
+            Platform-level usage metrics and adoption signals.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

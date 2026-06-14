@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Reports</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">MVP operational reports and delayed-work views.</p>
+          <p className="text-sm text-neutral-600">
+            MVP operational reports and delayed-work views.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

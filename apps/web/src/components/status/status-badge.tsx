@@ -4,18 +4,32 @@ type StatusBadgeProps = {
   value: string;
 };
 
-function toneForStatus(value: string): 'neutral' | 'success' | 'warning' | 'danger' {
+function toneForStatus(
+  value: string,
+): 'neutral' | 'success' | 'warning' | 'danger' {
   const normalized = value.toLowerCase();
 
-  if (normalized.includes('paid') || normalized.includes('ready') || normalized.includes('delivered')) {
+  if (
+    normalized.includes('paid') ||
+    normalized.includes('ready') ||
+    normalized.includes('delivered')
+  ) {
     return 'success';
   }
 
-  if (normalized.includes('blocked') || normalized.includes('overdue') || normalized.includes('out')) {
+  if (
+    normalized.includes('blocked') ||
+    normalized.includes('overdue') ||
+    normalized.includes('out')
+  ) {
     return 'danger';
   }
 
-  if (normalized.includes('awaiting') || normalized.includes('action') || normalized.includes('low')) {
+  if (
+    normalized.includes('awaiting') ||
+    normalized.includes('action') ||
+    normalized.includes('low')
+  ) {
     return 'warning';
   }
 

@@ -78,9 +78,12 @@ export function VehiclesPanel() {
     }
 
     return vehicles.filter((vehicle) =>
-      [vehicle.registrationNumber, vehicle.vin, vehicle.make, vehicle.model].some((value) =>
-        value?.toLowerCase().includes(normalizedSearch),
-      ),
+      [
+        vehicle.registrationNumber,
+        vehicle.vin,
+        vehicle.make,
+        vehicle.model,
+      ].some((value) => value?.toLowerCase().includes(normalizedSearch)),
     );
   }, [search, vehicles]);
 
@@ -103,7 +106,10 @@ export function VehiclesPanel() {
   }
 
   function customerNameFor(vehicle: VehicleRecord) {
-    return demoCustomers.find((customer) => customer.id === vehicle.customerId)?.fullName ?? vehicle.customerId;
+    return (
+      demoCustomers.find((customer) => customer.id === vehicle.customerId)
+        ?.fullName ?? vehicle.customerId
+    );
   }
 
   return (
@@ -112,7 +118,9 @@ export function VehiclesPanel() {
         <h2 className="text-xl font-semibold" id="mvp-vehicles-title">
           Vehicles
         </h2>
-        <p className="text-sm text-neutral-600">Client-side demo panel migrated from the legacy frontend.</p>
+        <p className="text-sm text-neutral-600">
+          Client-side demo panel migrated from the legacy frontend.
+        </p>
       </div>
       <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
         <Card>
@@ -125,7 +133,12 @@ export function VehiclesPanel() {
                 <select
                   className="h-10 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
                   id="vehicle-customer"
-                  onChange={(event) => setForm((current) => ({ ...current, customerId: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      customerId: event.target.value,
+                    }))
+                  }
                   value={form.customerId}
                 >
                   {demoCustomers.map((customer) => (
@@ -138,7 +151,12 @@ export function VehiclesPanel() {
               <FormField id="vehicle-registration" label="Registration number">
                 <Input
                   id="vehicle-registration"
-                  onChange={(event) => setForm((current) => ({ ...current, registrationNumber: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      registrationNumber: event.target.value,
+                    }))
+                  }
                   required
                   value={form.registrationNumber}
                 />
@@ -146,7 +164,12 @@ export function VehiclesPanel() {
               <FormField id="vehicle-vin" label="VIN">
                 <Input
                   id="vehicle-vin"
-                  onChange={(event) => setForm((current) => ({ ...current, vin: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      vin: event.target.value,
+                    }))
+                  }
                   value={form.vin}
                 />
               </FormField>
@@ -154,7 +177,12 @@ export function VehiclesPanel() {
                 <FormField id="vehicle-make" label="Make">
                   <Input
                     id="vehicle-make"
-                    onChange={(event) => setForm((current) => ({ ...current, make: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        make: event.target.value,
+                      }))
+                    }
                     required
                     value={form.make}
                   />
@@ -162,7 +190,12 @@ export function VehiclesPanel() {
                 <FormField id="vehicle-model" label="Model">
                   <Input
                     id="vehicle-model"
-                    onChange={(event) => setForm((current) => ({ ...current, model: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        model: event.target.value,
+                      }))
+                    }
                     required
                     value={form.model}
                   />
@@ -173,7 +206,12 @@ export function VehiclesPanel() {
                   <Input
                     id="vehicle-year"
                     inputMode="numeric"
-                    onChange={(event) => setForm((current) => ({ ...current, year: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        year: event.target.value,
+                      }))
+                    }
                     value={form.year}
                   />
                 </FormField>
@@ -181,7 +219,12 @@ export function VehiclesPanel() {
                   <Input
                     id="vehicle-odometer"
                     inputMode="numeric"
-                    onChange={(event) => setForm((current) => ({ ...current, odometer: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        odometer: event.target.value,
+                      }))
+                    }
                     value={form.odometer}
                   />
                 </FormField>
@@ -209,15 +252,20 @@ export function VehiclesPanel() {
                 <article className="rounded-lg border p-4" key={vehicle.id}>
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="font-semibold">{vehicle.registrationNumber}</h3>
+                      <h3 className="font-semibold">
+                        {vehicle.registrationNumber}
+                      </h3>
                       <p className="text-sm text-neutral-600">
                         {vehicle.make} {vehicle.model}
                       </p>
                     </div>
-                    <p className="text-sm text-neutral-500">Owner: {customerNameFor(vehicle)}</p>
+                    <p className="text-sm text-neutral-500">
+                      Owner: {customerNameFor(vehicle)}
+                    </p>
                   </div>
                   <p className="mt-2 text-sm text-neutral-500">
-                    {vehicle.year ?? 'Year n/a'} · {vehicle.odometer?.toLocaleString() ?? 0} km ·{' '}
+                    {vehicle.year ?? 'Year n/a'} ·{' '}
+                    {vehicle.odometer?.toLocaleString() ?? 0} km ·{' '}
                     {vehicle.vin ?? 'No VIN'}
                   </p>
                 </article>

@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Subscriptions</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Tenant subscription readiness and billing status.</p>
+          <p className="text-sm text-neutral-600">
+            Tenant subscription readiness and billing status.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

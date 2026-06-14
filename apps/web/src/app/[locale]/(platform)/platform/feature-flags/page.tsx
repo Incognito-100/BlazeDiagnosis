@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Feature flags</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Per-tenant feature flag controls.</p>
+          <p className="text-sm text-neutral-600">
+            Per-tenant feature flag controls.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

@@ -6,7 +6,10 @@ import { requireTenantPermission } from '@/lib/authorization/guards';
 
 import type { CreateCustomerInput } from '../schemas/customer.schema';
 
-export async function createCustomer(tenantId: string, input: CreateCustomerInput) {
+export async function createCustomer(
+  tenantId: string,
+  input: CreateCustomerInput,
+) {
   await requireTenantPermission(tenantId, 'customers.write');
 
   const [customer] = await db

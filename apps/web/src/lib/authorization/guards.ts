@@ -14,16 +14,23 @@ export async function requirePermission(permission: Permission) {
 
 export async function requireAnyPermission(requiredPermissions: Permission[]) {
   const user = await requireUser();
-  const allowed = requiredPermissions.some((permission) => user.permissions.includes(permission));
+  const allowed = requiredPermissions.some((permission) =>
+    user.permissions.includes(permission),
+  );
 
   if (!allowed) {
-    throw new Error(`Missing one of permissions: ${requiredPermissions.join(', ')}`);
+    throw new Error(
+      `Missing one of permissions: ${requiredPermissions.join(', ')}`,
+    );
   }
 
   return user;
 }
 
-export async function requireTenantPermission(tenantId: string, permission: Permission) {
+export async function requireTenantPermission(
+  tenantId: string,
+  permission: Permission,
+) {
   const user = await requirePermission(permission);
   const isPlatformAdmin = user.permissions.includes('platform.tenants.manage');
 

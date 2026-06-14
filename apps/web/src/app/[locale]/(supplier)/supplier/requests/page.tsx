@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Supplier requests</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Incoming parts requests from connected service stations.</p>
+          <p className="text-sm text-neutral-600">
+            Incoming parts requests from connected service stations.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

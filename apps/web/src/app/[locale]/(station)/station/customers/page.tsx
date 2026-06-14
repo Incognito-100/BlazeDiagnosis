@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Customers</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Tenant customer management and customer search.</p>
+          <p className="text-sm text-neutral-600">
+            Tenant customer management and customer search.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Customer services</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Current and historical service jobs for the customer.</p>
+          <p className="text-sm text-neutral-600">
+            Current and historical service jobs for the customer.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

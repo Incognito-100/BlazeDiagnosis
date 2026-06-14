@@ -10,23 +10,42 @@ export async function createInAppNotification(input: {
   title: string;
   body: string;
 }) {
-  const [notification] = await db.insert(notifications).values({ ...input, channel: 'in_app' }).returning();
+  const [notification] = await db
+    .insert(notifications)
+    .values({ ...input, channel: 'in_app' })
+    .returning();
   return notification;
 }
 
-export async function listUserNotifications(tenantId: string, recipientUserId: string) {
+export async function listUserNotifications(
+  tenantId: string,
+  recipientUserId: string,
+) {
   return db
     .select()
     .from(notifications)
-    .where(and(eq(notifications.tenantId, tenantId), eq(notifications.recipientUserId, recipientUserId)))
+    .where(
+      and(
+        eq(notifications.tenantId, tenantId),
+        eq(notifications.recipientUserId, recipientUserId),
+      ),
+    )
     .orderBy(desc(notifications.createdAt));
 }
 
-export async function markNotificationRead(tenantId: string, notificationId: string) {
+export async function markNotificationRead(
+  tenantId: string,
+  notificationId: string,
+) {
   const [notification] = await db
     .update(notifications)
     .set({ status: 'read', readAt: new Date() })
-    .where(and(eq(notifications.tenantId, tenantId), eq(notifications.id, notificationId)))
+    .where(
+      and(
+        eq(notifications.tenantId, tenantId),
+        eq(notifications.id, notificationId),
+      ),
+    )
     .returning();
 
   return notification;

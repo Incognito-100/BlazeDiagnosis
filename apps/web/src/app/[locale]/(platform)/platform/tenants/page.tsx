@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Tenants</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">SaaS tenant creation, suspension, and support overview.</p>
+          <p className="text-sm text-neutral-600">
+            SaaS tenant creation, suspension, and support overview.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

@@ -8,9 +8,20 @@ export async function getStationDashboardMetrics(tenantId: string) {
   await requireTenantPermission(tenantId, 'reports.view');
 
   const [openJobs, draftQuotes, outstandingInvoices] = await Promise.all([
-    db.select().from(jobCards).where(and(eq(jobCards.tenantId, tenantId))),
-    db.select().from(quotes).where(and(eq(quotes.tenantId, tenantId), eq(quotes.status, 'draft'))),
-    db.select().from(invoices).where(and(eq(invoices.tenantId, tenantId), eq(invoices.status, 'issued'))),
+    db
+      .select()
+      .from(jobCards)
+      .where(and(eq(jobCards.tenantId, tenantId))),
+    db
+      .select()
+      .from(quotes)
+      .where(and(eq(quotes.tenantId, tenantId), eq(quotes.status, 'draft'))),
+    db
+      .select()
+      .from(invoices)
+      .where(
+        and(eq(invoices.tenantId, tenantId), eq(invoices.status, 'issued')),
+      ),
   ]);
 
   return {

@@ -38,7 +38,10 @@ export async function requireTenantContext() {
   return tenant;
 }
 
-export function assertSameTenant(resourceTenantId: string, context: TenantContext) {
+export function assertSameTenant(
+  resourceTenantId: string,
+  context: TenantContext,
+) {
   if (resourceTenantId !== context.tenantId) {
     throw new Error('Cross-tenant access denied.');
   }

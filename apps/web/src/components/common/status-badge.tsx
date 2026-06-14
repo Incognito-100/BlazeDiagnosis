@@ -15,5 +15,14 @@ const tones = {
 };
 
 export function StatusBadge({ children, tone = 'neutral' }: StatusBadgeProps) {
-  return <span className={cn('rounded-full border px-2 py-1 text-xs font-medium', tones[tone])}>{children}</span>;
+  return (
+    <span
+      className={cn(
+        'rounded-full border px-2 py-1 text-xs font-medium',
+        tones[tone],
+      )}
+    >
+      {children}
+    </span>
+  );
 }

@@ -1,10 +1,18 @@
 import { and, eq, or } from 'drizzle-orm';
 
 import { db } from '@/db/client';
-import { invoiceLineItems, invoices, quoteLineItems, quotes } from '@/db/schema';
+import {
+  invoiceLineItems,
+  invoices,
+  quoteLineItems,
+  quotes,
+} from '@/db/schema';
 import { requireTenantPermission } from '@/lib/authorization/guards';
 
-export async function createInvoiceFromApprovedQuote(tenantId: string, quoteId: string) {
+export async function createInvoiceFromApprovedQuote(
+  tenantId: string,
+  quoteId: string,
+) {
   await requireTenantPermission(tenantId, 'invoices.create');
 
   return db.transaction(async (tx) => {
@@ -25,12 +33,17 @@ export async function createInvoiceFromApprovedQuote(tenantId: string, quoteId: 
         and(
           eq(quoteLineItems.tenantId, tenantId),
           eq(quoteLineItems.quoteId, quoteId),
-          or(eq(quoteLineItems.approvalStatus, 'approved'), eq(quoteLineItems.approvalStatus, 'not_required')),
+          or(
+            eq(quoteLineItems.approvalStatus, 'approved'),
+            eq(quoteLineItems.approvalStatus, 'not_required'),
+          ),
         ),
       );
 
     if (!billableItems.length) {
-      throw new Error('Cannot create an invoice without approved or billable quote items.');
+      throw new Error(
+        'Cannot create an invoice without approved or billable quote items.',
+      );
     }
 
     const totals = billableItems.reduce(

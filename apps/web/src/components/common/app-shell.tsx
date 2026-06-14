@@ -61,9 +61,16 @@ export function AppShell({ children, surface, title }: AppShellProps) {
           <Link className="font-bold" href={'/en' as Route}>
             Blaze POS
           </Link>
-          <nav aria-label={`${surface} navigation`} className="hidden gap-4 md:flex">
+          <nav
+            aria-label={`${surface} navigation`}
+            className="hidden gap-4 md:flex"
+          >
             {navItems[surface].map((item) => (
-              <Link className="text-sm text-neutral-600 hover:text-neutral-950" href={item.href} key={item.href}>
+              <Link
+                className="text-sm text-neutral-600 hover:text-neutral-950"
+                href={item.href}
+                key={item.href}
+              >
                 {item.label}
               </Link>
             ))}
@@ -72,7 +79,9 @@ export function AppShell({ children, surface, title }: AppShellProps) {
       </header>
       <main className="mx-auto max-w-7xl px-6 py-8">
         <div className="mb-8">
-          <p className="text-sm font-medium uppercase tracking-wide text-neutral-500">{surface}</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+            {surface}
+          </p>
           <h1 className={cn('text-3xl font-bold tracking-tight')}>{title}</h1>
         </div>
         {children}

@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Supplier deliveries</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Delivery status, ETA, proof of delivery, and delay notes.</p>
+          <p className="text-sm text-neutral-600">
+            Delivery status, ETA, proof of delivery, and delay notes.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

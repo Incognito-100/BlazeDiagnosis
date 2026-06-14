@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Supplier quotes</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Supplier quote responses and response status.</p>
+          <p className="text-sm text-neutral-600">
+            Supplier quote responses and response status.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

@@ -20,7 +20,10 @@ export function MvpShowcase() {
       <VehiclesPanel />
       <JobsPanel />
       <QuotesPanel />
-      <MarketplacePanel onSelectPart={setSelectedPartId} selectedPartId={selectedPartId} />
+      <MarketplacePanel
+        onSelectPart={setSelectedPartId}
+        selectedPartId={selectedPartId}
+      />
       <PartsPanel />
       <InvoicesPanel />
       <PaymentsPanel />

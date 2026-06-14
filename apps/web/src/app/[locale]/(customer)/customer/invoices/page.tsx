@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Customer invoices</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Open and historical customer invoices.</p>
+          <p className="text-sm text-neutral-600">
+            Open and historical customer invoices.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

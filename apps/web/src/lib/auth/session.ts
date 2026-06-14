@@ -10,10 +10,12 @@ export type AuthenticatedUser = {
   permissions: Permission[];
 };
 
-export const getCurrentUser = cache(async (): Promise<AuthenticatedUser | null> => {
-  // TODO: Replace with production auth provider session lookup.
-  return null;
-});
+export const getCurrentUser = cache(
+  async (): Promise<AuthenticatedUser | null> => {
+    // TODO: Replace with production auth provider session lookup.
+    return null;
+  },
+);
 
 export async function requireUser() {
   const user = await getCurrentUser();

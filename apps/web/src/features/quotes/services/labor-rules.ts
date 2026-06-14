@@ -1,5 +1,14 @@
-export type QuoteApprovalStatus = 'pending' | 'approved' | 'declined' | 'not_required';
-export type QuoteLineCategory = 'part' | 'labor' | 'diagnostic' | 'consumable' | 'optional_service';
+export type QuoteApprovalStatus =
+  | 'pending'
+  | 'approved'
+  | 'declined'
+  | 'not_required';
+export type QuoteLineCategory =
+  | 'part'
+  | 'labor'
+  | 'diagnostic'
+  | 'consumable'
+  | 'optional_service';
 
 export type QuoteLineItemForCalculation = {
   id: string;
@@ -25,25 +34,39 @@ export type QuoteCalculationResult = {
   total: number;
 };
 
-export function calculateApprovedQuoteTotals(items: QuoteLineItemForCalculation[]): QuoteCalculationResult {
-  const approvedNonLabor = items.filter((item) => item.category !== 'labor' && item.approvalStatus === 'approved');
+export function calculateApprovedQuoteTotals(
+  items: QuoteLineItemForCalculation[],
+): QuoteCalculationResult {
+  const approvedNonLabor = items.filter(
+    (item) => item.category !== 'labor' && item.approvalStatus === 'approved',
+  );
   const approvedDependencyGroups = new Set(
-    approvedNonLabor.map((item) => item.dependencyGroupId).filter((value): value is string => Boolean(value)),
+    approvedNonLabor
+      .map((item) => item.dependencyGroupId)
+      .filter((value): value is string => Boolean(value)),
   );
   const usedSharedLaborGroups = new Set<string>();
   const removedLaborItems: QuoteLineItemForCalculation[] = [];
 
   const approvedItems = items.filter((item) => {
     if (item.category !== 'labor') {
-      return item.approvalStatus === 'approved' || item.approvalStatus === 'not_required';
+      return (
+        item.approvalStatus === 'approved' ||
+        item.approvalStatus === 'not_required'
+      );
     }
 
     if (!item.laborRule || item.laborRule.type === 'always') {
-      return item.approvalStatus === 'approved' || item.approvalStatus === 'not_required';
+      return (
+        item.approvalStatus === 'approved' ||
+        item.approvalStatus === 'not_required'
+      );
     }
 
     if (item.laborRule.type === 'requires_approved_dependency') {
-      const include = approvedDependencyGroups.has(item.laborRule.dependencyGroupId);
+      const include = approvedDependencyGroups.has(
+        item.laborRule.dependencyGroupId,
+      );
       if (!include) {
         removedLaborItems.push(item);
       }
@@ -51,8 +74,12 @@ export function calculateApprovedQuoteTotals(items: QuoteLineItemForCalculation[
     }
 
     if (item.laborRule.type === 'shared_once_per_group') {
-      const hasDependency = approvedDependencyGroups.has(item.laborRule.dependencyGroupId);
-      const alreadyUsed = usedSharedLaborGroups.has(item.laborRule.dependencyGroupId);
+      const hasDependency = approvedDependencyGroups.has(
+        item.laborRule.dependencyGroupId,
+      );
+      const alreadyUsed = usedSharedLaborGroups.has(
+        item.laborRule.dependencyGroupId,
+      );
 
       if (!hasDependency || alreadyUsed) {
         removedLaborItems.push(item);

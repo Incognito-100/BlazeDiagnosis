@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Customer messages</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Customer-to-station chat threads.</p>
+          <p className="text-sm text-neutral-600">
+            Customer-to-station chat threads.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

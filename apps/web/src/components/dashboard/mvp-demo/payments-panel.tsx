@@ -7,7 +7,10 @@ export function PaymentsPanel() {
         <h2 className="text-xl font-semibold" id="mvp-payments-title">
           Payments placeholder
         </h2>
-        <p className="text-sm text-neutral-600">Payment gateway work remains post-MVP; this card keeps the route planned.</p>
+        <p className="text-sm text-neutral-600">
+          Payment gateway work remains post-MVP; this card keeps the route
+          planned.
+        </p>
       </div>
       <Card>
         <CardHeader>

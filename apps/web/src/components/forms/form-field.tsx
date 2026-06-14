@@ -12,7 +12,14 @@ type FormFieldProps = {
   className?: string;
 };
 
-export function FormField({ children, className, description, error, id, label }: FormFieldProps) {
+export function FormField({
+  children,
+  className,
+  description,
+  error,
+  id,
+  label,
+}: FormFieldProps) {
   const descriptionId = description ? `${id}-description` : undefined;
   const errorId = error ? `${id}-error` : undefined;
 
@@ -26,7 +33,11 @@ export function FormField({ children, className, description, error, id, label }
         </p>
       ) : null}
       {error ? (
-        <p className="text-sm font-medium text-red-700" id={errorId} role="alert">
+        <p
+          className="text-sm font-medium text-red-700"
+          id={errorId}
+          role="alert"
+        >
           {error}
         </p>
       ) : null}

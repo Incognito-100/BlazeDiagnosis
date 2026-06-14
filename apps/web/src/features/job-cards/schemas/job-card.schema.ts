@@ -8,4 +8,6 @@ export const createServiceRequestSchema = z.object({
   preferredDate: z.coerce.date().optional(),
 });
 
-export type CreateServiceRequestInput = z.infer<typeof createServiceRequestSchema>;
+export type CreateServiceRequestInput = z.infer<
+  typeof createServiceRequestSchema
+>;

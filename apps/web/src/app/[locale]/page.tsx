@@ -20,11 +20,16 @@ export default function HomePage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-6 py-12">
       <section className="space-y-4">
-        <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500">Blaze POS MVP</p>
-        <h1 className="text-4xl font-bold tracking-tight">Tenant-first service station SaaS starter</h1>
+        <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
+          Blaze POS MVP
+        </p>
+        <h1 className="text-4xl font-bold tracking-tight">
+          Tenant-first service station SaaS starter
+        </h1>
         <p className="max-w-3xl text-lg text-neutral-600">
-          This scaffold implements the first vertical-slice structure for customers, vehicles, job cards, quotes,
-          approvals, parts requests, invoices, notifications, and audit logs.
+          This scaffold implements the first vertical-slice structure for
+          customers, vehicles, job cards, quotes, approvals, parts requests,
+          invoices, notifications, and audit logs.
         </p>
       </section>
 

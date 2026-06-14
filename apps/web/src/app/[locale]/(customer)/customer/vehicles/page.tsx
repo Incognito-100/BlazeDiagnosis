@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Customer vehicles</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Vehicle profiles linked to the signed-in customer.</p>
+          <p className="text-sm text-neutral-600">
+            Vehicle profiles linked to the signed-in customer.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

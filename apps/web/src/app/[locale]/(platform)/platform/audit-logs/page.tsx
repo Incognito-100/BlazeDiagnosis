@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Audit logs</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Platform and tenant-sensitive event review.</p>
+          <p className="text-sm text-neutral-600">
+            Platform and tenant-sensitive event review.
+          </p>
         </CardContent>
       </Card>
     </AppShell>

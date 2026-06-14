@@ -1,12 +1,19 @@
 import { and, eq } from 'drizzle-orm';
 
 import { db } from '@/db/client';
-import { vehicleCustomers, vehicleOdometerReadings, vehicles } from '@/db/schema';
+import {
+  vehicleCustomers,
+  vehicleOdometerReadings,
+  vehicles,
+} from '@/db/schema';
 import { requireTenantPermission } from '@/lib/authorization/guards';
 
 import type { CreateVehicleInput } from '../schemas/vehicle.schema';
 
-export async function createVehicle(tenantId: string, input: CreateVehicleInput) {
+export async function createVehicle(
+  tenantId: string,
+  input: CreateVehicleInput,
+) {
   await requireTenantPermission(tenantId, 'vehicles.write');
 
   return db.transaction(async (tx) => {
@@ -49,11 +56,19 @@ export async function createVehicle(tenantId: string, input: CreateVehicleInput)
   });
 }
 
-export async function listVehiclesForCustomer(tenantId: string, customerId: string) {
+export async function listVehiclesForCustomer(
+  tenantId: string,
+  customerId: string,
+) {
   await requireTenantPermission(tenantId, 'vehicles.read');
 
   return db
     .select()
     .from(vehicles)
-    .where(and(eq(vehicles.tenantId, tenantId), eq(vehicles.primaryCustomerId, customerId)));
+    .where(
+      and(
+        eq(vehicles.tenantId, tenantId),
+        eq(vehicles.primaryCustomerId, customerId),
+      ),
+    );
 }

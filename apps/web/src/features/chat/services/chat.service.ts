@@ -3,7 +3,11 @@ import { and, asc, eq } from 'drizzle-orm';
 import { db } from '@/db/client';
 import { chatMessages, chatThreads } from '@/db/schema';
 
-export async function createJobChatThread(tenantId: string, jobCardId: string, customerId?: string) {
+export async function createJobChatThread(
+  tenantId: string,
+  jobCardId: string,
+  customerId?: string,
+) {
   const [thread] = await db
     .insert(chatThreads)
     .values({ tenantId, jobCardId, customerId, threadType: 'job_customer' })
@@ -27,6 +31,11 @@ export async function listChatMessages(tenantId: string, threadId: string) {
   return db
     .select()
     .from(chatMessages)
-    .where(and(eq(chatMessages.tenantId, tenantId), eq(chatMessages.threadId, threadId)))
+    .where(
+      and(
+        eq(chatMessages.tenantId, tenantId),
+        eq(chatMessages.threadId, threadId),
+      ),
+    )
     .orderBy(asc(chatMessages.createdAt));
 }

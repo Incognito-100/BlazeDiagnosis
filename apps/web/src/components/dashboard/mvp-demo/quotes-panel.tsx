@@ -7,7 +7,9 @@ export function QuotesPanel() {
         <h2 className="text-xl font-semibold" id="mvp-quotes-title">
           Quote builder
         </h2>
-        <p className="text-sm text-neutral-600">Demo quote layout for approval workflow screens.</p>
+        <p className="text-sm text-neutral-600">
+          Demo quote layout for approval workflow screens.
+        </p>
       </div>
       <QuoteBuilder />
     </section>

@@ -4,7 +4,11 @@ import { db } from '@/db/client';
 import { quoteApprovalEvents, quoteLineItems, quotes } from '@/db/schema';
 import { requireTenantPermission } from '@/lib/authorization/guards';
 
-export async function createQuoteFromJobCard(tenantId: string, jobCardId: string, customerId: string) {
+export async function createQuoteFromJobCard(
+  tenantId: string,
+  jobCardId: string,
+  customerId: string,
+) {
   await requireTenantPermission(tenantId, 'quotes.create');
 
   const [quote] = await db
@@ -21,8 +25,19 @@ export async function createQuoteFromJobCard(tenantId: string, jobCardId: string
   return quote;
 }
 
-export async function approveQuoteLineItem(tenantId: string, quoteId: string, quoteLineItemId: string, customerId: string) {
-  return recordQuoteLineDecision({ tenantId, quoteId, quoteLineItemId, customerId, decision: 'approved' });
+export async function approveQuoteLineItem(
+  tenantId: string,
+  quoteId: string,
+  quoteLineItemId: string,
+  customerId: string,
+) {
+  return recordQuoteLineDecision({
+    tenantId,
+    quoteId,
+    quoteLineItemId,
+    customerId,
+    decision: 'approved',
+  });
 }
 
 export async function declineQuoteLineItem(
@@ -32,7 +47,14 @@ export async function declineQuoteLineItem(
   customerId: string,
   reason?: string,
 ) {
-  return recordQuoteLineDecision({ tenantId, quoteId, quoteLineItemId, customerId, decision: 'declined', reason });
+  return recordQuoteLineDecision({
+    tenantId,
+    quoteId,
+    quoteLineItemId,
+    customerId,
+    decision: 'declined',
+    reason,
+  });
 }
 
 async function recordQuoteLineDecision(input: {
@@ -49,7 +71,9 @@ async function recordQuoteLineDecision(input: {
     const [quote] = await tx
       .select()
       .from(quotes)
-      .where(and(eq(quotes.tenantId, input.tenantId), eq(quotes.id, input.quoteId)))
+      .where(
+        and(eq(quotes.tenantId, input.tenantId), eq(quotes.id, input.quoteId)),
+      )
       .limit(1);
 
     if (!quote) {
@@ -60,7 +84,11 @@ async function recordQuoteLineDecision(input: {
       throw new Error('Customer is not allowed to approve this quote.');
     }
 
-    if (quote.lockedAt || quote.status === 'locked' || quote.status === 'expired') {
+    if (
+      quote.lockedAt ||
+      quote.status === 'locked' ||
+      quote.status === 'expired'
+    ) {
       throw new Error('Quote is locked or expired.');
     }
 
@@ -92,11 +120,24 @@ async function recordQuoteLineDecision(input: {
     const allLineItems = await tx
       .select()
       .from(quoteLineItems)
-      .where(and(eq(quoteLineItems.tenantId, input.tenantId), eq(quoteLineItems.quoteId, input.quoteId)));
+      .where(
+        and(
+          eq(quoteLineItems.tenantId, input.tenantId),
+          eq(quoteLineItems.quoteId, input.quoteId),
+        ),
+      );
 
-    const hasPending = allLineItems.some((item) => item.approvalStatus === 'pending');
-    const hasApproved = allLineItems.some((item) => item.approvalStatus === 'approved' || item.approvalStatus === 'not_required');
-    const hasDeclined = allLineItems.some((item) => item.approvalStatus === 'declined');
+    const hasPending = allLineItems.some(
+      (item) => item.approvalStatus === 'pending',
+    );
+    const hasApproved = allLineItems.some(
+      (item) =>
+        item.approvalStatus === 'approved' ||
+        item.approvalStatus === 'not_required',
+    );
+    const hasDeclined = allLineItems.some(
+      (item) => item.approvalStatus === 'declined',
+    );
     const status = hasPending
       ? hasApproved || hasDeclined
         ? 'partially_approved'
@@ -110,7 +151,9 @@ async function recordQuoteLineDecision(input: {
     await tx
       .update(quotes)
       .set({ status, updatedAt: new Date() })
-      .where(and(eq(quotes.tenantId, input.tenantId), eq(quotes.id, input.quoteId)));
+      .where(
+        and(eq(quotes.tenantId, input.tenantId), eq(quotes.id, input.quoteId)),
+      );
 
     return lineItem;
   });

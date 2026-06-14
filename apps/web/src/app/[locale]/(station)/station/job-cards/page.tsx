@@ -9,7 +9,9 @@ export default function Page() {
           <CardTitle>Job cards</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-600">Workshop job cards, assignments, and statuses.</p>
+          <p className="text-sm text-neutral-600">
+            Workshop job cards, assignments, and statuses.
+          </p>
         </CardContent>
       </Card>
     </AppShell>
