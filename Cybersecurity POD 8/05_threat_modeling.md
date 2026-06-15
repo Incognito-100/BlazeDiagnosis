@@ -24,6 +24,11 @@ With the repository recently reorganized, the primary operational modules (`cust
 ## 2. Technical API Route Hardening Blueprint
 To eliminate temporary placeholder structures and successfully implement this multi-layered defensive pipeline across the newly reworked routes, the backend configurations must align with this standardized middleware pattern:
 
+## Roles
+* **Owner:** Gerrit Dry
+* **Lead:** JW Blignaut
+* **Reviewer:** Ruvan de Klerk
+
 ```typescript
 import { Router } from 'express';
 import { authenticateToken } from '../../../shared/middleware/auth';
