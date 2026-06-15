@@ -21,7 +21,7 @@ To balance frictionless customer convenience with core data safety, access to re
 * **Link Leakage Scenarios:** If an unauthenticated tracking link is sent over SMS or Email, it risks being cached in local browser histories, forward-shared with unauthorized entities, or scraped by network adversaries operating on open public Wi-Fi networks.
 * **Link Expiration Architectures:** Tokenized links must incorporate strict time-to-live (TTL) limits. Tracking parameters should automatically expire within **48 to 72 hours** of final invoice compilation.
 * **Identity Escalation Protections:** Before executing high-stakes financial operations—such as approving a costly quote or processing a payment change—the application must trigger an additional verification challenge, such as a temporary One-Time Password (OTP) sent to the customer's registered mobile number.
-* ## Roles:
+ ## Roles:
 * **Owner:** Gerrit Dry
 * **Reviewer:** Ruvan de Klerk
 * **Lead:** JW Blignaut
