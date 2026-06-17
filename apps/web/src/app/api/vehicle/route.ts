@@ -65,5 +65,17 @@ export async function POST(request: Request) {
     // Return the created vehicle as a JSON response with a 201 status code.
 
     return NextResponse.json(vehicle, { status: 201 });
+    
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: err.flatten().fieldErrors },
+        { status: 422 }
+      );
+    }
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message }, { status: 409 });
+    }
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 };

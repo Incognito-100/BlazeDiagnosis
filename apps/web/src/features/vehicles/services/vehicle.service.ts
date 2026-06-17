@@ -16,6 +16,7 @@ export async function createVehicle(
 ) {
   await requireTenantPermission(tenantId, 'vehicles.write');
 
+<<<<<<< Updated upstream
   const VIN_Checking = input.vin
   ? and(eq(vehicles.tenantId, tenantId), eq(vehicles.vin, input.vin))
   : eq(vehicles.tenantId, tenantId);
@@ -29,6 +30,23 @@ export async function createVehicle(
     if (existingVIN) {
       throw new Error('A vehicle with the same VIN already exists in this tenant.');
     }
+=======
+
+
+const whereCondition = input.registrationNumber
+  ? and(eq(vehicles.tenantId, tenantId), eq(vehicles.registrationNumber, input.registrationNumber))
+  : eq(vehicles.tenantId, tenantId);
+
+const [registrationNumber] = await db
+    .select()
+    .from(vehicles)
+    .where(whereCondition)
+    .limit(1);
+
+  if (registrationNumber) {
+    throw new Error('A vehicle with the same registration number already exists in this tenant.');
+  }
+>>>>>>> Stashed changes
 
   return db.transaction(async (tx) => {
     const [vehicle] = await tx
@@ -103,3 +121,4 @@ export async function deleteVehicle(
       ),
     );
 }
+
