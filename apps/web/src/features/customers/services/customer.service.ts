@@ -23,6 +23,10 @@ export async function createCustomer(
     .where(whereCondition)
     .limit(1);
 
+  if (existingPhone) {
+    throw new Error('A customer with the same phone number already exists in this tenant.');
+  }
+
   const [customer] = await db
     .insert(customers)
     .values({

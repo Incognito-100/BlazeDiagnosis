@@ -33,6 +33,8 @@ try {
   }
 }
 
+// TODO: Implement Patch route for updating a vehicle
+
 // DELETE
 export async function DELETE(request: Request, 
 

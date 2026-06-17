@@ -57,10 +57,7 @@ export async function POST(req: Request) {
     const customer = await createCustomer(tenant.tenantId, input);
 
     return NextResponse.json(customer, { status: 201 });
-  }
-
-//TODO: Add the catch statement to the try operator dont forget to return JSON
-catch (err) {
+  } catch (err) {
     if (err instanceof ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: err.flatten().fieldErrors },
