@@ -86,3 +86,11 @@ export default CustomerPage;
 // TODO: Style the form with consistent spacing and labels for each field.
 // TODO: After submission, clear the form or show a success message.
 // TODO: (Optional) Extend the form to allow adding multiple customers into an array.
+
+<div>
+    <h2>Customer Form</h2>
+    <form onSubmit={handleSubmit}>
+        <input required type="text" name="fullName" value={customer.fullName} onChange={handleChange} placeholder="Full Name" className="form-control" />
+        <button type="submit">Register Customer</button>
+    </form>
+</div>
