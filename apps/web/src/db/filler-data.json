@@ -1,0 +1,34 @@
+{
+  "customers": [
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@gmail.com"
+    },
+    {
+      "firstName": "Sarah",
+      "lastName": "Lee",
+      "email": "sarah.lee@example.com"
+    },
+    {
+      "firstName": "Sipho",
+      "lastName": "Modise",
+      "email": "s.modise@outlook.com"
+    },
+    {
+      "firstName": "Amelia",
+      "lastName": "Van der Merwe",
+      "email": "amelia.vdm@mweb.co.za"
+    }
+  ],
+  "auditLogs": [
+    {
+      "action": "SYSTEM_INITIALIZATION",
+      "entityType": "SYSTEM"
+    },
+    {
+      "action": "TENANT_PROVISIONED",
+      "entityType": "TENANT"
+    }
+  ]
+}
