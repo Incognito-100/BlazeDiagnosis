@@ -16,6 +16,20 @@ export async function createVehicle(
 ) {
   await requireTenantPermission(tenantId, 'vehicles.write');
 
+  const VIN_Checking = input.vin
+  ? and(eq(vehicles.tenantId, tenantId), eq(vehicles.vin, input.vin))
+  : eq(vehicles.tenantId, tenantId);
+
+  const [existingVIN] = await db
+    .select()
+    .from(vehicles)
+    .where(VIN_Checking)
+    .limit(1);
+
+    if (existingVIN) {
+      throw new Error('A vehicle with the same VIN already exists in this tenant.');
+    }
+
   return db.transaction(async (tx) => {
     const [vehicle] = await tx
       .insert(vehicles)
