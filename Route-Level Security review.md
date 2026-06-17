@@ -21,4 +21,14 @@ The checked codebase parameters are currently **SAFE** from direct cross-tenant 
 ## Roles
 * **Owner:** Gerrit Dry
 * **Contributers:** Ruvan de Klerk and JW Blignaut
-* **Reviewer:** 
+* **Reviewer:** Luke de Kiewit
+
+## Review | Luke de Kiewit | 17/06/2026
+
+Findings:
+
+- **File:** `apps/web/src/app/api/customers/route.ts`
+- - The API route accepts `tenantId` from query parameters instead of resolving from auth session context, violating the standard "Never trust a client-provided tenantId".
+
+- **File:** `apps/web/src/app/api/customers/[id]/route.ts`
+- - GET endpoint retrieves `tenantId` from URL query  instead of using `requireTenantContext()` to get it from the session.
