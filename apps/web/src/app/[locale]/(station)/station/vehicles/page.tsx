@@ -1,6 +1,6 @@
 import { AppShell } from '@/components/common/app-shell';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { VehicleList } from '@/components/Vehicles/vehicle-list';
+import { VehicleList } from '@/components/vehicles/vehicle-list';
 
 export default function Page() {
   return (
