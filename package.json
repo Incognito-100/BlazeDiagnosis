@@ -13,5 +13,8 @@
   "devDependencies": {
     "prettier": "latest",
     "prettier-plugin-organize-imports": "latest"
+  },
+  "dependencies": {
+    "react-router-dom": "^7.18.0"
   }
 }

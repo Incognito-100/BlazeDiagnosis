@@ -3,6 +3,7 @@ import {
   pgTable,
   text,
   timestamp,
+  boolean, // added boolean at import to make the type work
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
@@ -31,6 +32,9 @@ export const customers = pgTable(
       .notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .defaultNow()
+      .notNull(),
+    isArchived: boolean('is_archived')
+      .default(false)
       .notNull(),
   },
   (table) => [

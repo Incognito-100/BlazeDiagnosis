@@ -4,6 +4,7 @@ import {
   pgTable,
   text,
   timestamp,
+  boolean,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
@@ -39,6 +40,7 @@ export const vehicles = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
+    isArchived: boolean('is_archived').default(false).notNull(),
   },
   (table) => [
     index('vehicles_tenant_customer_idx').on(

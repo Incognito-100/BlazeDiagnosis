@@ -16,6 +16,34 @@ export async function createVehicle(
 ) {
   await requireTenantPermission(tenantId, 'vehicles.write');
 
+  const VIN_Checking = input.vin
+  ? and(eq(vehicles.tenantId, tenantId), eq(vehicles.vin, input.vin))
+  : eq(vehicles.tenantId, tenantId);
+
+  const [existingVIN] = await db
+    .select()
+    .from(vehicles)
+    .where(VIN_Checking)
+    .limit(1);
+
+    if (existingVIN) {
+      throw new Error('A vehicle with the same VIN already exists in this tenant.');
+    }
+
+const whereCondition = input.registrationNumber
+  ? and(eq(vehicles.tenantId, tenantId), eq(vehicles.registrationNumber, input.registrationNumber))
+  : eq(vehicles.tenantId, tenantId);
+
+const [registrationNumber] = await db
+    .select()
+    .from(vehicles)
+    .where(whereCondition)
+    .limit(1);
+
+  if (registrationNumber) {
+    throw new Error('A vehicle with the same registration number already exists in this tenant.');
+  }
+
   return db.transaction(async (tx) => {
     const [vehicle] = await tx
       .insert(vehicles)
@@ -72,3 +100,21 @@ export async function listVehiclesForCustomer(
       ),
     );
 }
+
+// DELETE Function
+export async function deleteVehicle(
+  tenantId: string,
+  vehicleId: string,
+) {
+  await requireTenantPermission(tenantId, 'vehicles.write');
+
+  await db
+    .delete(vehicles)
+    .where(
+      and(
+        eq(vehicles.id, vehicleId),
+        eq(vehicles.tenantId, tenantId),
+      ),
+    );
+}
+

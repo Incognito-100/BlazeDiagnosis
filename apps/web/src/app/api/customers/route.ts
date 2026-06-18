@@ -1,48 +1,86 @@
-import { createCustomerSchema } from "@/features/customers/schemas/customer.schema";
-import { createCustomer } from "@/features/customers/services/customer.service";
-import { requireTenantContext } from "@/lib/tenancy/tenant-context";
-import { NextResponse } from "next/server";
+import { createCustomerSchema } from '@/features/customers/schemas/customer.schema';
+import { createCustomer } from '@/features/customers/services/customer.service';
+import { requireTenantContext } from '@/lib/tenancy/tenant-context';
+import { NextResponse } from 'next/server';
+import { db } from '@/db/client';
+import { customers } from '@/db/schema/customers';
+import { and, eq } from 'drizzle-orm';
+import { ZodError } from 'zod';
 
 export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const tenantId = searchParams.get("tenantId");
+    try {
+        const tenant = await requireTenantContext();
+        // Get the tenantId from the URL query string
+        const {searchParams} = new URL(request.url);
+        const tenantId = searchParams.get('tenantId');
 
-    if (!tenantId) {
-      return NextResponse.json(
-        { error: "Missing required tenantId parameter" },
-        { status: 400 }
+        // Validate that the tenantId is provided
+        if (!tenantId) {
+            return NextResponse.json(
+                {error: 'Missing required tenantId parameter'},
+                {status: 400}
+            );
+        }
+          const activeCustomers = await db
+      .select()
+      .from(customers)
+      .where(
+        and(
+          eq(customers.tenantId, tenantId),
+          eq(customers.isArchived, false)
+        )
       );
-    }
 
-    // TODO: Query the database for active/non‑archived customers
-    // Example placeholder response:
-    return NextResponse.json(
-      { message: "GET customers endpoint ready", tenantId },
-      { status: 200 }
-    );
+    // Return the clean data list payload
+    return NextResponse.json(activeCustomers);
+
+// Implemented the catch sequence for the error handling.
   } catch (error) {
-    console.error("Error fetching customers:", error);
+    console.error('API Error:', error);
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
 }
+
+// The POST function is responsible for handling the creation of a new customer. 
 
 export async function POST(req: Request) {
+
+  // The try block is used to handle the main logic of the POST request, which includes validating the tenant context, parsing the request body, 
+  // validating the input against the schema, and creating a new customer in the database.
+  // If any of these steps fail, the catch block will handle the error and return a JSON response with an appropriate error message and status code.
+
   try {
+    // Authenticate user session and retrieve active tenancy metadata
     const tenant = await requireTenantContext();
     const body = await req.json();
+    
+    // Enforce data integrity by validating the body payload against the Zod schema
     const input = createCustomerSchema.parse(body);
+    
+    // Execute core database write service isolated to the client's tenant space
     const customer = await createCustomer(tenant.tenantId, input);
 
+    // Return the newly created customer profile resource
     return NextResponse.json(customer, { status: 201 });
-  } catch (error) {
-    console.error("Error creating customer:", error);
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 500 }
-    );
+
+    // The catch block is designed to handle different types of errors that may occur during the execution of the POST request.
+    // If the error is a ZodError, it indicates that the input validation failed, and a 422 Unprocessable Entity status code is returned along with the validation error details.
+    // If the error is a general Error instance, it returns a 409 Conflict status code with the error message.
+    // For any other types of errors, it returns a 500 Internal Server Error status code with a generic error message.
+
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: err.flatten().fieldErrors },
+        { status: 422 }
+      );
+    }
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message }, { status: 409 });
+    }
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+};
