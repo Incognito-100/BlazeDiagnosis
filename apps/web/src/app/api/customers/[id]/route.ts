@@ -1,62 +1,42 @@
-import { updateCustomerSchema } from '@/features/customers/schemas/customer.schema';
-import { getCustomerById, updateCustomer } from '@/features/customers/services/customer.service';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { requireTenantContext } from '@/lib/tenancy/tenant-context';
+import { createCustomerSchema } from '@/features/customers/schemas/customer.schema';
+import { createCustomer, searchCustomers } from '@/features/customers/services/customer.service';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  // Get the tenantId from the URL query string
-  const { id } = await params;
-  const tenantId = request.nextUrl.searchParams.get('tenantId');
-
-  // Validate that the tenantId is provided
-  if (!tenantId) 
-  {
+export async function GET(req: Request) {
+  try {
+    const tenant = await requireTenantContext();
+    const data = await searchCustomers(tenant.tenantId, '');
+    return NextResponse.json({ customers: data }, { status: 200 });
+  } catch (error) {
+    console.error('GET /customers failed:', error);
     return NextResponse.json(
-      { error: 'Missing required tenantId parameter' },
-      { status: 400 },
+      { error: 'Internal Server Error' },
+      { status: 500 }
     );
   }
-
-  try {
-      const DB = await getCustomerById(tenantId, id)
-      return NextResponse.json(DB)
-    } catch (error) {
-      return NextResponse.json(
-        { error: 'Failed to fetch Customer details' },
-        { status: 500 },
-      );
-    }
 }
 
-export async function PATCH(
-  request:NextRequest,
-  {params}: {params: Promise<{id:string}>}
-) {
-  const { id } = await params;
-  const tenantId = request.nextUrl.searchParams.get('tenantId');
-
-  if (!tenantId) {
-    return NextResponse.json(
-      { error: 'Missing required tenantId parameter' },
-      { status: 400 },
-    );
-  }
-
+export async function POST(req: Request) {
   try {
-    const input = await request.json();
-    const validatedInput = updateCustomerSchema.parse(input);
-    const ProsedIput = await updateCustomer(tenantId, id, validatedInput)
-    return NextResponse.json(ProsedIput)
-  }
-  catch (error)
-  {
+    const tenant = await requireTenantContext();
+    const body = await req.json();
+
+    const parsed = createCustomerSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', issues: parsed.error.issues },
+        { status: 400 }
+      );
+    }
+
+    const customer = await createCustomer(tenant.tenantId, parsed.data);
+    return NextResponse.json(customer, { status: 201 });
+  } catch (error) {
+    console.error('POST /customers failed:', error);
     return NextResponse.json(
-      { error: 'Failed to update customer' },
-      { status: 500 },
+      { error: 'Internal Server Error' },
+      { status: 500 }
     );
   }
-
-
 }

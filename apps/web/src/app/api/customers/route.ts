@@ -50,13 +50,17 @@ export async function POST(req: Request) {
   // If any of these steps fail, the catch block will handle the error and return a JSON response with an appropriate error message and status code.
 
   try {
+    // Authenticate user session and retrieve active tenancy metadata
     const tenant = await requireTenantContext();
     const body = await req.json();
     
     // Validate structural integrity matching schema parameters
     const input = createCustomerSchema.parse(body);
+    
+    // Execute core database write service isolated to the client's tenant space
     const customer = await createCustomer(tenant.tenantId, input);
 
+    // Return the newly created customer profile resource
     return NextResponse.json(customer, { status: 201 });
 
   } catch (error: any) {
@@ -66,7 +70,7 @@ export async function POST(req: Request) {
     // If the error is an instance of ZodError, input validation failed, returning a 400 Bad Request.
     if (error instanceof ZodError) {
       return NextResponse.json(
-        { error: 'Validation Failed', issues: error.errors },
+        { error: 'Validation Failed', issues: error.issues },
         { status: 400 }
       );
     }

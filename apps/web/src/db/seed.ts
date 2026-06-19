@@ -1,69 +1,65 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import 'dotenv/config';
-
-// Import the tables directly from the schema paths
+import fs from 'fs';
+import path from 'path';
 import { tenants } from './schema/tenants';
 import { customers } from './schema/customers';
 import { auditLogs } from './schema/audit';
 
-// Import our external filler data JSON payload safely
-import fillerData from './filler-data.json';
-
-const databaseUrl = process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error('DATABASE_URL environment variable is missing at runtime.');
+const fillerDataPath = path.join(__dirname, 'filler-data.json');
+let fillerData: any = {};
+if (fs.existsSync(fillerDataPath)) {
+  fillerData = JSON.parse(fs.readFileSync(fillerDataPath, 'utf-8'));
 }
 
-const pool = new Pool({
-  connectionString: databaseUrl,
-});
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool);
-
 const SYSTEM_TENANT_ID = '00000000-0000-0000-0000-000000000001';
 
 async function main() {
-  console.log('⏳ Starting isolated database seeding process from JSON sources...');
+  console.log('⏳ Starting isolated database seeding process...');
 
   try {
-    // 1. Create a foundational Global Testing Tenant
-    console.log('🏢 Seeding default developer tenant...');
     await db.insert(tenants).values({
       id: SYSTEM_TENANT_ID,
       name: 'Blaze POS Dev Workshop',
-      slug: 'blaze-pos-dev-workshop', 
-    }).onConflictDoNothing(); 
+      slug: 'blaze-pos-dev-workshop',
+    }).onConflictDoNothing();
 
-    // 2. Map and Create sample Customer Profiles from JSON
-    console.log(`👥 Seeding ${fillerData.customers.length} mock customer profiles...`);
-    const customersToInsert = fillerData.customers.map((c) => ({
-      tenantId: SYSTEM_TENANT_ID,
-      firstName: c.firstName,
-      lastName: c.lastName,
-      email: c.email,
-    }));
-    
-    await db.insert(customers).values(customersToInsert).onConflictDoNothing();
+    const customerData = fillerData.customers?.length
+      ? fillerData.customers.map((c: any) => ({
+          tenantId: SYSTEM_TENANT_ID,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          email: c.email,
+        }))
+      : [
+          { tenantId: SYSTEM_TENANT_ID, firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
+          { tenantId: SYSTEM_TENANT_ID, firstName: 'Sarah', lastName: 'Lee', email: 'sarah.lee@example.com' },
+        ];
 
-    // 3. Map and Create structural Audit Trails from JSON
-    console.log(`📜 Seeding ${fillerData.auditLogs.length} baseline system audit records...`);
-    const logsToInsert = fillerData.auditLogs.map((log) => ({
-      tenantId: SYSTEM_TENANT_ID,
-      action: log.action,
-      entityType: log.entityType,
-      entityId: SYSTEM_TENANT_ID, // Pointing to system container root
-    }));
+    await db.insert(customers).values(customerData).onConflictDoNothing();
+
+    const logsToInsert = fillerData.auditLogs?.length
+      ? fillerData.auditLogs.map((log: any) => ({
+          tenantId: SYSTEM_TENANT_ID,
+          action: log.action,
+          entityType: log.entityType,
+          entityId: SYSTEM_TENANT_ID,
+        }))
+      : [
+          { tenantId: SYSTEM_TENANT_ID, action: 'SYSTEM_INITIALIZATION', entityType: 'SYSTEM', entityId: SYSTEM_TENANT_ID },
+        ];
 
     await db.insert(auditLogs).values(logsToInsert).onConflictDoNothing();
 
-    console.log('✅ Database seeding operations completed successfully!');
+    console.log('✅ Database seeding completed successfully!');
   } catch (error) {
-    console.error('❌ Critical failure encountered during seeding operation:', error);
+    console.error('❌ Critical failure during seeding:', error);
     process.exit(1);
   } finally {
-    await pool.end(); // Cleanly close the pool connection stream
-    process.exit(0);
+    await pool.end();
   }
 }
 
