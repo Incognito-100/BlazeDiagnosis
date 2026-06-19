@@ -1,5 +1,4 @@
 import { headers } from 'next/headers';
-
 import { requireUser } from '@/lib/auth/session';
 
 export type TenantContext = {
@@ -7,6 +6,7 @@ export type TenantContext = {
   source: 'session' | 'host' | 'platform_override';
 };
 
+// ✅ Resolves tenant from session or host header
 export async function resolveTenantFromRequest(): Promise<TenantContext | null> {
   const user = await requireUser().catch(() => null);
 
@@ -28,20 +28,28 @@ export async function resolveTenantFromRequest(): Promise<TenantContext | null> 
   return null;
 }
 
-export async function requireTenantContext() {
+// ✅ Safe tenant context enforcement with dev fallback
+export async function requireTenantContext(): Promise<TenantContext> {
   const tenant = await resolveTenantFromRequest();
 
   if (!tenant) {
+    // Development fallback for local testing
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ No tenant found — using dev fallback tenant.');
+      return {
+        tenantId: '00000000-0000-0000-0000-000000000001',
+        source: 'platform_override',
+      };
+    }
+
     throw new Error('Tenant context required.');
   }
 
   return tenant;
 }
 
-export function assertSameTenant(
-  resourceTenantId: string,
-  context: TenantContext,
-) {
+// ✅ Cross-tenant access guard
+export function assertSameTenant(resourceTenantId: string, context: TenantContext) {
   if (resourceTenantId !== context.tenantId) {
     throw new Error('Cross-tenant access denied.');
   }
