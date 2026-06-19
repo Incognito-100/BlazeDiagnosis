@@ -7,7 +7,8 @@ import { tenants } from './schema/tenants';
 import { customers } from './schema/customers';
 import { auditLogs } from './schema/audit';
 
-const fillerDataPath = path.join(__dirname, 'filler-data.json');
+// Fixed: Replaced global legacy __dirname with modern import.meta.dirname
+const fillerDataPath = path.join(import.meta.dirname, 'filler-data.json');
 let fillerData: any = {};
 if (fs.existsSync(fillerDataPath)) {
   fillerData = JSON.parse(fs.readFileSync(fillerDataPath, 'utf-8'));
