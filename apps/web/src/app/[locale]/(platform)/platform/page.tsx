@@ -1,8 +1,8 @@
 import { Activity, Building2, Flag, ShieldAlert } from 'lucide-react';
 
-import { AppShell } from '@/components/common/app-shell';
-import { PlaceholderCard } from '@/components/common/placeholder-card';
-import { StatCard } from '@/components/common/stat-card';
+import { AppShell } from '@/components/common/appShell';
+import { PlaceholderCard } from '@/components/common/placeholderCard';
+import { StatCard } from '@/components/common/statCard';
 
 export default function PlatformDashboardPage() {
   return (

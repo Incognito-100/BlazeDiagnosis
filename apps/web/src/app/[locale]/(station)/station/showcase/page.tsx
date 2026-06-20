@@ -1,4 +1,4 @@
-import { AppShell } from '@/components/common/app-shell';
+import { AppShell } from '@/components/common/appShell';
 import { MvpShowcase } from '@/components/dashboard/mvp-demo';
 
 export default function StationShowcasePage() {

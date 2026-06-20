@@ -1,29 +1,22 @@
 import { notFound } from 'next/navigation';
 
-import { AppShell } from '@/components/common/app-shell';
-import { StatusBadge } from '@/components/common/status-badge';
+import { AppShell } from '@/components/common/appShell';
+import { StatusBadge } from '@/components/common/statusBadge';
 import {
   ResponsiveTable,
   tableCellClassName,
   tableHeadClassName,
 } from '@/components/data-display';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import type { InvoiceDetail } from '@/types/invoices';
+import type { IdPageProps } from '@/types/routes';
 
 const currencyFormatter = new Intl.NumberFormat('en-ZA', {
   currency: 'ZAR',
   style: 'currency',
 });
 
-type InvoiceLineItem = {
-  amountCents: number;
-  description: string;
-  id: string;
-  quantity: number;
-  type: 'LABOUR' | 'PART';
-  unitPriceCents: number;
-};
-
-const demoInvoice = {
+const demoInvoice: InvoiceDetail = {
   customerRef: 'CUS-001',
   dueDate: '2026-06-24',
   id: 'inv-2026-001',
@@ -47,18 +40,14 @@ const demoInvoice = {
       type: 'PART' as const,
       unitPriceCents: 35000,
     },
-  ] satisfies InvoiceLineItem[],
+  ],
   status: 'PENDING' as const,
   subtotalCents: 120000,
   totalCents: 138000,
   vatCents: 18000,
 };
 
-type InvoiceDetailPageProps = {
-  params: Promise<{ id: string }>;
-};
-
-export default async function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
+export default async function InvoiceDetailPage({ params }: IdPageProps) {
   const { id } = await params;
 
   if (id !== demoInvoice.id) {

@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/common/app-shell';
-import { StatusBadge } from '@/components/common/status-badge';
+import { AppShell } from '@/components/common/appShell';
+import { StatusBadge } from '@/components/common/statusBadge';
 import {
   ResponsiveTable,
   tableCellClassName,
@@ -9,16 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-type AuditLog = {
-  action: string;
-  actorUserId: string | null;
-  createdAt: string;
-  entityId: string | null;
-  entityType: string;
-  id: string;
-  newValue: Record<string, unknown> | null;
-};
+import type { AuditLog } from '@/types/audit';
 
 const demoLogs: AuditLog[] = [
   {

@@ -1,8 +1,8 @@
 import { Clock3, PackageCheck, PackageX, Send } from 'lucide-react';
 
-import { AppShell } from '@/components/common/app-shell';
-import { PlaceholderCard } from '@/components/common/placeholder-card';
-import { StatCard } from '@/components/common/stat-card';
+import { AppShell } from '@/components/common/appShell';
+import { PlaceholderCard } from '@/components/common/placeholderCard';
+import { StatCard } from '@/components/common/statCard';
 
 export default function SupplierDashboardPage() {
   return (

@@ -1,15 +1,13 @@
 import { notFound } from 'next/navigation';
 import { Send } from 'lucide-react';
 
-import { AppShell } from '@/components/common/app-shell';
+import { AppShell } from '@/components/common/appShell';
+import { BrandedDocumentPreview } from '@/components/tenant/brandedDocumentPreview';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import type { IdPageProps } from '@/types/routes';
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
-
-export default async function InvoiceDetailPage({ params }: Props) {
+export default async function InvoiceDetailPage({ params }: IdPageProps) {
   const { id } = await params;
 
   if (!id) {
@@ -38,18 +36,21 @@ export default async function InvoiceDetailPage({ params }: Props) {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Actions</CardTitle>
-            <CardDescription>Workflow actions will connect to invoice mutations.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button disabled className="w-full" variant="accent">
-              <Send className="size-4" />
-              Send invoice
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="grid gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Actions</CardTitle>
+              <CardDescription>Workflow actions will connect to invoice mutations.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button disabled className="w-full" variant="accent">
+                <Send className="size-4" />
+                Send invoice
+              </Button>
+            </CardContent>
+          </Card>
+          <BrandedDocumentPreview documentType="invoice" />
+        </div>
       </div>
     </AppShell>
   );

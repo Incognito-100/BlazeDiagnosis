@@ -1,2 +1,2 @@
-export * from './empty-state';
-export * from './responsive-table';
+export * from './emptyState';
+export * from './responsiveTable';

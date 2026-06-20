@@ -1,11 +1,11 @@
-import { AppShell } from '@/components/common/app-shell';
-import { StatusBadge } from '@/components/common/status-badge';
+import { AppShell } from '@/components/common/appShell';
+import { StatusBadge } from '@/components/common/statusBadge';
 import {
   ResponsiveTable,
   tableCellClassName,
   tableHeadClassName,
 } from '@/components/data-display';
-import { PartsRequestForm } from '@/components/forms/parts-request-form';
+import { PartsRequestForm } from '@/components/forms/partsRequestForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function PartsRequestPage() {

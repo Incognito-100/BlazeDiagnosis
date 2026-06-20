@@ -1,8 +1,8 @@
 import { PlusCircle } from 'lucide-react';
 
-import { AppShell } from '@/components/common/app-shell';
+import { AppShell } from '@/components/common/appShell';
 import { VehicleForm, VehicleList } from '@/components/vehicles';
-import { PageSection } from '@/components/layout/page-section';
+import { PageSection } from '@/components/layout/pageSection';
 import { Button } from '@/components/ui/button';
 
 export default function StationVehiclesPage() {

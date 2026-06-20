@@ -2,8 +2,8 @@ import type { Route } from 'next';
 import Link from 'next/link';
 import { Send } from 'lucide-react';
 
-import { AppShell } from '@/components/common/app-shell';
-import { StatusBadge } from '@/components/common/status-badge';
+import { AppShell } from '@/components/common/appShell';
+import { StatusBadge } from '@/components/common/statusBadge';
 import {
   ResponsiveTable,
   tableCellClassName,

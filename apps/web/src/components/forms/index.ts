@@ -1,2 +1,2 @@
-export * from './form-actions';
-export * from './form-field';
+export * from './formActions';
+export * from './formField';

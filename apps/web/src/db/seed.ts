@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import { eq } from 'drizzle-orm';
 
-import { db } from './seed-client';
+import { db } from './seedClient';
 import { partsRequestItems, partsRequests } from './schema/suppliers';
 import { users } from './schema/users';
 

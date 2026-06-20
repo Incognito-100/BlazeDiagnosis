@@ -1,8 +1,8 @@
 import { CircleDollarSign, FileClock, PackageSearch, Wrench } from 'lucide-react';
 
-import { AppShell } from '@/components/common/app-shell';
-import { StatCard } from '@/components/common/stat-card';
-import { PlaceholderCard } from '@/components/common/placeholder-card';
+import { AppShell } from '@/components/common/appShell';
+import { StatCard } from '@/components/common/statCard';
+import { PlaceholderCard } from '@/components/common/placeholderCard';
 
 export default function StationDashboardPage() {
   return (

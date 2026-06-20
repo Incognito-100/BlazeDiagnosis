@@ -1,190 +1,142 @@
-"use client"
-import  {AppShell}  from '@/components/common/app-shell' ;
-import React, { useState } from "react"
+'use client';
 
-//TypeScript interface that defines the shape of a Vehicle object. In plain terms, it’s a contract that says: “Any object of type 
-//Vehicle must have these properties, and they must be strings.” The required fields are customerId, registrationNumber, make, model,
-//and vin, which means every vehicle must include those values. The optional fields, marked with a ?, like variant, year, engineType, 
-//fuelType, transmission, odometer, and color, can be left out if they’re not relevant. This helps TypeScript catch errors early by 
-//ensuring that when you create or update a vehicle, you’re using the correct property names and types, and it makes your code more 
-//predictable and easier to maintain.
+import type { ChangeEvent, FormEvent } from 'react';
+import { useState } from 'react';
 
-interface Vehicle {
-    customerId: string;
-    registrationNumber: string;
-    make: string;
-    model: string;
-    vin?: string;
-    variant?: string;
-    year?: string;
-    engineType?: string;
-    fuelType?: string;
-    transmission?: string;
-    odometer?: string;
-    color?: string;
-}
+import { FormActions, FormField } from '@/components/forms';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import type { VehicleFormState } from '@/types/vehicles';
 
-const VehicleForm: React.FC = () => {
-    const [vehicle , setVehicle] = useState<Vehicle>({
-        customerId: "",
-        registrationNumber: "",
-        make: "",
-        model:"",
-        vin: "",
-        variant: "",
-        year: "",
-        engineType: "",
-        fuelType: "",
-        transmission: "",
-        odometer: "",
-        color: "",
-    })
-
-//This code gives your form its behavior. The handleChange function updates the vehicle state whenever you type into an input or
-//select a value, making sure only the field you changed is replaced while the rest stay the same. The handleSubmit function runs 
-//when you press the submit button, stopping the page from refreshing and then working with the current vehicle data.    
-
-const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setVehicle((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Vehicle submitted:", vehicle);
-    // TODO: integrate with backend API
-  };
-
-//This return block renders your vehicle form inside the app’s layout. The <AppShell> provides the global frame, and inside it the 
-//<form> contains all the input fields tied to the vehicle state. Each field updates through handleChange, while pressing the submit
-//button triggers handleSubmit to stop the page refresh and work with the current vehicle data. In short, it’s a styled, controlled
-//form for adding vehicle details, wrapped in your app’s layout.
-  
-return (
-  <AppShell title= "Vehicle" surface="customer">
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-lg mx-auto bg-gray-900 text-white p-6 rounded-lg shadow-md space-y-4"
-    >
-      <h2 className="text-xl font-bold text-blue-400">Add Vehicle</h2>
-
-      {/* Required fields */}
-      <input
-        type="text"
-        name="customerId"
-        value={vehicle.customerId}
-        onChange={handleChange}
-        placeholder="Customer ID"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-        required
-      
-      />
-      <input
-        type="text"
-        name="registrationNumber"
-        value={vehicle.registrationNumber}
-        onChange={handleChange}
-        placeholder="Registration Number"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-        required
-      
-      />
-      <input
-        type="text"
-        name="make"
-        value={vehicle.make}
-        onChange={handleChange}
-        placeholder="Make"
-        className= "w-full p-2 rounded bg-gray-800 border border-gray-700"
-        required 
-      />
-      <input
-        type="text"
-        name="model"
-        value={vehicle.model}
-        onChange={handleChange}
-        placeholder="Model"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-        required
-      />
-
-      {/* Optional fields */}
-      <input
-        type="text"
-        name="vin"
-        value={vehicle.vin}
-        onChange={handleChange}
-        placeholder="VIN"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-      />
-      <input
-        type="text"
-        name="variant"
-        value={vehicle.variant}
-        onChange={handleChange}
-        placeholder="Variant"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-      />
-      <input
-        type="text"
-        name="year"
-        value={vehicle.year}
-        onChange={handleChange}
-        placeholder="Year"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-      />
-      <input
-        type="text"
-        name="engineType"
-        value={vehicle.engineType}
-        onChange={handleChange}
-        placeholder="Engine Type"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-      />
-      <input
-        type="text"
-        name="fuelType"
-        value={vehicle.fuelType}
-        onChange={handleChange}
-        placeholder="Fuel Type"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-      />
-      <input
-        type="text"
-        name="transmission"
-        value={vehicle.transmission}
-        onChange={handleChange}
-        placeholder="Transmission"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-      />
-      <input
-        type="text"
-        name="odometer"
-        value={vehicle.odometer}
-        onChange={handleChange}
-        placeholder="Odometer"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-      />
-      <input
-        type="text"
-        name="color"
-        value={vehicle.color}
-        onChange={handleChange}
-        placeholder="Color"
-        className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-      />
-
-      <button
-        type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded"
-      >
-        Save Vehicle
-      </button>
-    </form>
-  </AppShell>
-  );
+const initialState: VehicleFormState = {
+  color: '',
+  customerId: '',
+  engineType: '',
+  fuelType: '',
+  make: '',
+  model: '',
+  odometer: '',
+  registrationNumber: '',
+  transmission: '',
+  variant: '',
+  vin: '',
+  year: '',
 };
 
-export default VehicleForm;
+export function VehicleForm() {
+  const [vehicle, setVehicle] = useState<VehicleFormState>(initialState);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = event.currentTarget;
+    setVehicle((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStatusMessage(`${vehicle.registrationNumber || 'Vehicle'} is ready to be saved once the vehicle mutation is connected.`);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Capture vehicle</CardTitle>
+        <CardDescription>
+          Record vehicle identity and service intake metadata in a responsive, workshop-friendly form.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form className="grid gap-4" onSubmit={handleSubmit}>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <FormField id="customerId" label="Customer ID">
+              <Input
+                id="customerId"
+                name="customerId"
+                onChange={handleChange}
+                required
+                value={vehicle.customerId}
+              />
+            </FormField>
+            <FormField id="registrationNumber" label="Registration number">
+              <Input
+                id="registrationNumber"
+                name="registrationNumber"
+                onChange={handleChange}
+                required
+                value={vehicle.registrationNumber}
+              />
+            </FormField>
+            <FormField id="vin" label="VIN">
+              <Input id="vin" name="vin" onChange={handleChange} value={vehicle.vin} />
+            </FormField>
+            <FormField id="make" label="Make">
+              <Input id="make" name="make" onChange={handleChange} required value={vehicle.make} />
+            </FormField>
+            <FormField id="model" label="Model">
+              <Input id="model" name="model" onChange={handleChange} required value={vehicle.model} />
+            </FormField>
+            <FormField id="variant" label="Variant">
+              <Input id="variant" name="variant" onChange={handleChange} value={vehicle.variant} />
+            </FormField>
+            <FormField id="year" label="Year">
+              <Input id="year" inputMode="numeric" name="year" onChange={handleChange} value={vehicle.year} />
+            </FormField>
+            <FormField id="odometer" label="Odometer">
+              <Input id="odometer" inputMode="numeric" name="odometer" onChange={handleChange} value={vehicle.odometer} />
+            </FormField>
+            <FormField id="color" label="Color">
+              <Input id="color" name="color" onChange={handleChange} value={vehicle.color} />
+            </FormField>
+            <FormField id="engineType" label="Engine type">
+              <Input id="engineType" name="engineType" onChange={handleChange} value={vehicle.engineType} />
+            </FormField>
+            <FormField id="fuelType" label="Fuel type">
+              <select
+                className="h-10 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                id="fuelType"
+                name="fuelType"
+                onChange={handleChange}
+                value={vehicle.fuelType}
+              >
+                <option value="">Select fuel type</option>
+                <option value="petrol">Petrol</option>
+                <option value="diesel">Diesel</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="electric">Electric</option>
+              </select>
+            </FormField>
+            <FormField id="transmission" label="Transmission">
+              <select
+                className="h-10 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                id="transmission"
+                name="transmission"
+                onChange={handleChange}
+                value={vehicle.transmission}
+              >
+                <option value="">Select transmission</option>
+                <option value="automatic">Automatic</option>
+                <option value="manual">Manual</option>
+              </select>
+            </FormField>
+          </div>
+
+          {statusMessage ? (
+            <p aria-live="polite" className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+              {statusMessage}
+            </p>
+          ) : null}
+
+          <FormActions>
+            <Button type="submit" variant="accent">
+              Save vehicle
+            </Button>
+            <Button onClick={() => setVehicle(initialState)} type="button" variant="outline">
+              Reset
+            </Button>
+          </FormActions>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}

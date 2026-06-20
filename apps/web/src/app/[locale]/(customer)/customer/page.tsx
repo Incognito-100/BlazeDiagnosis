@@ -1,9 +1,9 @@
 import { Clock, FileCheck2, MessageSquare, ShieldCheck } from 'lucide-react';
 
-import { AppShell } from '@/components/common/app-shell';
-import { StatCard } from '@/components/common/stat-card';
+import { AppShell } from '@/components/common/appShell';
+import { StatCard } from '@/components/common/statCard';
 import { CustomerForm, CustomerList } from '@/components/customers';
-import { PageSection } from '@/components/layout/page-section';
+import { PageSection } from '@/components/layout/pageSection';
 
 export default function CustomerDashboardPage() {
   return (

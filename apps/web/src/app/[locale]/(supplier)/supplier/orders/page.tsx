@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/common/app-shell';
-import { PlaceholderCard } from '@/components/common/placeholder-card';
+import { AppShell } from '@/components/common/appShell';
+import { PlaceholderCard } from '@/components/common/placeholderCard';
 
 export default function Page() {
   return (

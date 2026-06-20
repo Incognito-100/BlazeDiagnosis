@@ -1,55 +1,34 @@
-import { NextResponse } from 'next/server';
-import { ZodError } from 'zod';
-
-import { createCustomerSchema } from '@/features/customers/schemas/customer.schema';
+import { createCustomerSchema } from '@/features/customers/schemas/customerSchema';
 import {
   createCustomer,
   searchCustomers,
-} from '@/features/customers/services/customer.service';
-import { requireTenantContext } from '@/lib/tenancy/tenant-context';
+} from '@/features/customers/services/customerService';
+import { apiCreated, apiOk, handleApiError } from '@/lib/api/response';
+import { requireTenantContext } from '@/lib/tenancy/tenantContext';
 
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : 'Internal Server Error';
-}
+const routeName = '/api/customers';
 
 export async function GET(request: Request) {
   try {
     const tenant = await requireTenantContext();
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') ?? '';
-    const data = await searchCustomers(tenant.tenantId, query);
+    const customers = await searchCustomers(tenant.tenantId, query);
 
-    return NextResponse.json({ customers: data }, { status: 200 });
+    return apiOk({ customers }, { meta: { count: customers.length } });
   } catch (error) {
-    console.error('GET /api/customers failed:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error', message: getErrorMessage(error) },
-      { status: 500 },
-    );
+    return handleApiError(`GET ${routeName}`, error);
   }
 }
 
 export async function POST(request: Request) {
   try {
     const tenant = await requireTenantContext();
-    const body = await request.json();
-    const input = createCustomerSchema.parse(body);
+    const input = createCustomerSchema.parse(await request.json());
     const customer = await createCustomer(tenant.tenantId, input);
 
-    return NextResponse.json(customer, { status: 201 });
+    return apiCreated({ customer });
   } catch (error) {
-    console.error('POST /api/customers failed:', error);
-
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        { error: 'Validation failed', issues: error.issues },
-        { status: 400 },
-      );
-    }
-
-    return NextResponse.json(
-      { error: 'Internal Server Error', message: getErrorMessage(error) },
-      { status: 500 },
-    );
+    return handleApiError(`POST ${routeName}`, error);
   }
 }

@@ -1,8 +1,8 @@
 import type { Route } from 'next';
 import Link from 'next/link';
 
-import { AppShell } from '@/components/common/app-shell';
-import { StatusBadge } from '@/components/common/status-badge';
+import { AppShell } from '@/components/common/appShell';
+import { StatusBadge } from '@/components/common/statusBadge';
 import {
   ResponsiveTable,
   tableCellClassName,
@@ -10,24 +10,15 @@ import {
 } from '@/components/data-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import type { CustomerInvoiceSummary } from '@/types/invoices';
+import type { StatusTone } from '@/types/ui';
 
 const currencyFormatter = new Intl.NumberFormat('en-ZA', {
   currency: 'ZAR',
   style: 'currency',
 });
 
-type Invoice = {
-  dueDate: string;
-  id: string;
-  invoiceNumber: string;
-  issueDate: string;
-  status: 'OVERDUE' | 'PAID' | 'PENDING';
-  subtotalCents: number;
-  totalCents: number;
-  vatCents: number;
-};
-
-const invoices: Invoice[] = [
+const invoices: CustomerInvoiceSummary[] = [
   {
     dueDate: '2026-06-24',
     id: 'inv-2026-001',
@@ -40,7 +31,7 @@ const invoices: Invoice[] = [
   },
 ];
 
-const statusTone: Record<Invoice['status'], 'danger' | 'success' | 'warning'> = {
+const statusTone: Record<CustomerInvoiceSummary['status'], StatusTone> = {
   OVERDUE: 'danger',
   PAID: 'success',
   PENDING: 'warning',

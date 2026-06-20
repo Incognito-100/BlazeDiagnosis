@@ -1,4 +1,4 @@
 export * from './types';
-export * from './vehicle-detail';
-export * from './vehicle-form';
-export * from './vehicle-list';
+export * from './vehicleDetail';
+export * from './vehicleForm';
+export * from './vehicleList';

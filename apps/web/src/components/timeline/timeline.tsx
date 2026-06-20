@@ -1,19 +1,6 @@
-import type { ReactNode } from 'react';
-
 import { cn } from '@/lib/utils';
 
-type TimelineItem = {
-  id: string;
-  subtitle?: ReactNode;
-  timestamp?: string;
-  title: ReactNode;
-};
-
-type TimelineProps = {
-  className?: string;
-  emptyMessage?: string;
-  items: TimelineItem[];
-};
+import type { TimelineProps } from '@/types/ui';
 
 export function Timeline({
   className,

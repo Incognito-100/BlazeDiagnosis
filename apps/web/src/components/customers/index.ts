@@ -1,2 +1,3 @@
-export * from './customer-form';
-export * from './customer-list';
+export * from './customerForm';
+export * from './customerList';
+export * from './customerVehicleWizard';

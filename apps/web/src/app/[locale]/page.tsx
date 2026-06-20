@@ -2,14 +2,10 @@ import type { Route } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Building2, CarFront, ShieldCheck, Truck } from 'lucide-react';
 
+import { ThemeToggle } from '@/components/theme/themeToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-type DashboardLink = {
-  description: string;
-  href: Route;
-  label: string;
-};
+import type { DashboardLink } from '@/types/navigation';
 
 const dashboardLinks: DashboardLink[] = [
   {
@@ -49,6 +45,10 @@ const capabilities = [
 export default function HomePage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="flex justify-end">
+        <ThemeToggle />
+      </div>
+
       <section className="grid min-h-[44rem] items-center gap-8 rounded-3xl border border-border/80 bg-card/80 p-6 shadow-soft backdrop-blur lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
         <div className="space-y-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
