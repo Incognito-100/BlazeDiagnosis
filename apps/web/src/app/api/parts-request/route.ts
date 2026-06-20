@@ -9,10 +9,7 @@ export async function GET(req: Request) {
   const jobCardId = searchParams.get("jobCardId");
 
   if (!jobCardId) {
-    return NextResponse.json(
-      { error: "Missing required 'jobCardId' parameter" }, 
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Missing required 'jobCardId'" }, { status: 400 });
   }
 
   try {
@@ -20,14 +17,11 @@ export async function GET(req: Request) {
       .select()
       .from(partsRequests)
       .where(eq(partsRequests.jobCardId, jobCardId));
-      
+
     return NextResponse.json(requests);
   } catch (error) {
     console.error("Error fetching parts requests:", error);
-    return NextResponse.json(
-      { error: "Error fetching parts requests" }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -37,15 +31,14 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { tenantId, jobCardId, staffId, items } = body;
 
-    // Strict validation check for payload integrity
-    if (!tenantId || !jobCardId || !staffId || !items || !Array.isArray(items)) {
+    if (!tenantId || !jobCardId || !staffId || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
-        { error: "Missing required parameters or 'items' is not an array" }, 
+        { error: "Invalid request payload. Ensure 'items' is a non-empty array." },
         { status: 400 }
       );
     }
 
-    // 1️ Create the main request header
+    // 1️⃣ Create parent request
     const [request] = await db.insert(partsRequests).values({
       tenantId,
       jobCardId,
@@ -53,21 +46,21 @@ export async function POST(req: Request) {
       status: "draft",
     }).returning();
 
-    // 2️ Map over and batch insert linked array items safely
-    const itemValues = items.map((item: any) => ({
+    // 2️⃣ Insert child items
+    const itemValues: (typeof partsRequestItems.$inferInsert)[] = items.map((item: any) => ({
       requestId: request.id,
-      partId: item.partId,
-      quantity: item.quantity,
-      notes: item.notes || null, // Fallback if no specific notes provided
+      partId: String(item.partId || item.partNumber || ""), // ✅ cast to text
+      quantity: Number(item.quantity) || 1,
+      notes: item.notes || null,
     }));
 
     await db.insert(partsRequestItems).values(itemValues);
 
-    return NextResponse.json(request);
-  } catch (error) {
-    console.error("Error creating parts request:", error);
+    return NextResponse.json({ success: true, requestId: request.id }, { status: 201 });
+  } catch (error: any) {
+    console.error("❌ Critical API Error:", error.message);
     return NextResponse.json(
-      { error: "Error creating parts request" }, 
+      { error: error.message || "Failed to process parts request" },
       { status: 500 }
     );
   }

@@ -1,66 +1,62 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import 'dotenv/config';
-import fs from 'fs';
-import path from 'path';
-import { tenants } from './schema/tenants';
-import { customers } from './schema/customers';
-import { auditLogs } from './schema/audit';
+import { db } from "./seed-client"; // ✅ use Node-safe client
+import { users } from "./schema/users";
+import { partsRequests, partsRequestItems } from "./schema/parts";
+import { eq } from "drizzle-orm";
 
-const fillerDataPath = path.join(__dirname, 'filler-data.json');
-let fillerData: any = {};
-if (fs.existsSync(fillerDataPath)) {
-  fillerData = JSON.parse(fs.readFileSync(fillerDataPath, 'utf-8'));
-}
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(pool);
-const SYSTEM_TENANT_ID = '00000000-0000-0000-0000-000000000001';
+const SYSTEM_TENANT_ID = "00000000-0000-0000-0000-000000000001";
+const MOCK_JOB_CARD_ID = "11111111-1111-1111-1111-111111111111";
+const MOCK_USER_ID = "22222222-2222-2222-2222-222222222222";
 
 async function main() {
-  console.log('⏳ Starting isolated database seeding process...');
+  console.log("⏳ Seeding user...");
+  await db
+    .insert(users)
+    .values({
+      id: MOCK_USER_ID,
+      tenantId: SYSTEM_TENANT_ID,
+      name: "Dev Mechanic Account",
+      email: "mechanic@blazediagnosis.local",
+      role: "mechanic",
+    })
+    .onConflictDoNothing();
 
-  try {
-    await db.insert(tenants).values({
-      id: SYSTEM_TENANT_ID,
-      name: 'Blaze POS Dev Workshop',
-      slug: 'blaze-pos-dev-workshop',
-    }).onConflictDoNothing();
+  console.log("⏳ Seeding parts request...");
+  let [request] = await db
+    .insert(partsRequests)
+    .values({
+      id: "99999999-9999-9999-9999-999999999999",
+      tenantId: SYSTEM_TENANT_ID,
+      jobCardId: MOCK_JOB_CARD_ID,
+      requestedByUserId: MOCK_USER_ID,
+      status: "draft",
+    })
+    .onConflictDoNothing()
+    .returning();
 
-    const customerData = fillerData.customers?.length
-      ? fillerData.customers.map((c: any) => ({
-          tenantId: SYSTEM_TENANT_ID,
-          firstName: c.firstName,
-          lastName: c.lastName,
-          email: c.email,
-        }))
-      : [
-          { tenantId: SYSTEM_TENANT_ID, firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
-          { tenantId: SYSTEM_TENANT_ID, firstName: 'Sarah', lastName: 'Lee', email: 'sarah.lee@example.com' },
-        ];
-
-    await db.insert(customers).values(customerData).onConflictDoNothing();
-
-    const logsToInsert = fillerData.auditLogs?.length
-      ? fillerData.auditLogs.map((log: any) => ({
-          tenantId: SYSTEM_TENANT_ID,
-          action: log.action,
-          entityType: log.entityType,
-          entityId: SYSTEM_TENANT_ID,
-        }))
-      : [
-          { tenantId: SYSTEM_TENANT_ID, action: 'SYSTEM_INITIALIZATION', entityType: 'SYSTEM', entityId: SYSTEM_TENANT_ID },
-        ];
-
-    await db.insert(auditLogs).values(logsToInsert).onConflictDoNothing();
-
-    console.log('✅ Database seeding completed successfully!');
-  } catch (error) {
-    console.error('❌ Critical failure during seeding:', error);
-    process.exit(1);
-  } finally {
-    await pool.end();
+  if (!request) {
+    [request] = await db
+      .select()
+      .from(partsRequests)
+      .where(eq(partsRequests.jobCardId, MOCK_JOB_CARD_ID))
+      .limit(1);
   }
+
+  if (request) {
+    await db
+      .insert(partsRequestItems)
+      .values({
+        requestId: request.id,
+        partId: "SM-001",
+        quantity: 2,
+        notes: "Seeded test part",
+      })
+      .onConflictDoNothing();
+  }
+
+  console.log("✅ Seeding complete!");
 }
 
-main();
+main().catch((err) => {
+  console.error("❌ Seed failed:", err);
+  process.exit(1);
+});

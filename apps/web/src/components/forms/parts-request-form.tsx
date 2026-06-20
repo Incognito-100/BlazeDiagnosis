@@ -1,5 +1,13 @@
 import React, { useState } from "react";
 
+// 💡 MAP YOUR SKUs TO THE NUMERIC IDS FOUND IN YOUR DB
+const partMapping: Record<string, number> = {
+  "SM-001": 1,
+  "SM-002": 2,
+  "AL-001": 3,
+  "BP-001": 4,
+};
+
 export function PartsRequestForm({
   jobCardId,
   tenantId,
@@ -8,7 +16,7 @@ export function PartsRequestForm({
   tenantId: string;
 }) {
   const [partName, setPartName] = useState("");
-  const [partNumber, setPartNumber] = useState("");
+  const [partNumber, setPartNumber] = useState(""); // This is your SKU/String
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,18 +26,31 @@ export function PartsRequestForm({
     setLoading(true);
 
     try {
-      // Call your API route instead of backend service directly
+      // 1. Convert the SKU string to the numeric ID the database expects
+      const numericPartId = partMapping[partNumber] || parseInt(partNumber);
+
+      if (!numericPartId || isNaN(numericPartId)) {
+        throw new Error("Invalid Part Number: Could not map to a database ID.");
+      }
+
+      // 2. Prepare the payload structure
+      const payload = {
+        tenantId,
+        jobCardId,
+        staffId: 1, // Ensure this user ID exists in your 'users' table
+        items: [
+          {
+            partId: numericPartId,
+            quantity: quantity,
+            notes: notes,
+          },
+        ],
+      };
+
       const res = await fetch("/api/parts-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenantId,
-          jobCardId,
-          partName,
-          partNumber,
-          quantity,
-          notes,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -38,11 +59,10 @@ export function PartsRequestForm({
         throw new Error(data.error || "Failed to create parts request");
       }
 
-      console.log("Parts request created:", data);
       alert("Parts request submitted successfully!");
     } catch (error) {
-      console.error(" Failed to create parts request:", error);
-      alert("Error submitting request.");
+      console.error("Failed to create parts request:", error);
+      alert("Error: " + (error instanceof Error ? error.message : "Submission failed"));
     } finally {
       setLoading(false);
     }
@@ -64,11 +84,13 @@ export function PartsRequestForm({
       </div>
 
       <div>
-        <label className="block font-medium">Part Number</label>
+        <label className="block font-medium">Part Number (SKU)</label>
         <input
           type="text"
           value={partNumber}
           onChange={(e) => setPartNumber(e.target.value)}
+          placeholder="e.g. SM-001"
+          required
           className="w-full border rounded px-2 py-1"
         />
       </div>
