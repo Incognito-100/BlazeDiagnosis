@@ -43,7 +43,7 @@ export async function fetchVehiclesForCustomer(customerId: string) {
 
 export async function fetchCustomerIntakeHistory(customerid:string)
 {
-  return requestJson<{ intakes: VehicleRecord[] }>(`api/api/customer-intakes?customerId=${customerid}`,{
+  return requestJson<{ intakes: VehicleRecord[] }>(`/api/customer-intakes?customerId=${customerid}`, {
     errorMessage: 'Failed to fetch customer intake history'
   })
 }
@@ -54,5 +54,14 @@ export async function createCustomerVehicleIntake(intakeData: unknown) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(intakeData),
     errorMessage: 'Failed to create new customer vehicle intake.',
+  });
+}
+
+export async function createCustomer(customerData: unknown) {
+  return requestJson<Customer>(`/api/customers/${customerId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(customerData),
+    errorMessage: 'Failed to create new customer profile.',
   });
 }
