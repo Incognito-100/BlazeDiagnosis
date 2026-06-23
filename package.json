@@ -8,10 +8,14 @@
     "lint": "pnpm --filter @blaze-pos/web lint",
     "format": "pnpm --filter @blaze-pos/web format",
     "typecheck": "pnpm --filter @blaze-pos/web typecheck",
-    "typegen": "pnpm --filter @blaze-pos/web typegen"
+    "typegen": "pnpm --filter @blaze-pos/web typegen",
+    "test:web": "pnpm --filter @blaze-pos/web exec vitest run"
   },
   "devDependencies": {
     "prettier": "latest",
     "prettier-plugin-organize-imports": "latest"
+  },
+  "dependencies": {
+    "save-dev": "^0.0.1-security"
   }
 }

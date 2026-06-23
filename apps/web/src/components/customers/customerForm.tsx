@@ -5,8 +5,15 @@ import { useState } from 'react';
 
 import { FormActions, FormField } from '@/components/forms';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { createCustomer } from '@/lib/apiClient';
 import type { CustomerFormState } from '@/types/customers';
 
 const initialState: CustomerFormState = {
@@ -14,7 +21,8 @@ const initialState: CustomerFormState = {
   alternateNumber: '',
   companyName: '',
   email: '',
-  fullName: '',
+  firstName: '',
+  lastName: '',
   marketingConsent: false,
   mobileNumber: '',
   preferredCommunicationChannel: '',
@@ -26,19 +34,45 @@ export function CustomerForm() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const handleChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    event: ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const target = event.currentTarget;
-    const value = target instanceof HTMLInputElement && target.type === 'checkbox'
-      ? target.checked
-      : target.value;
+    const value =
+      target instanceof HTMLInputElement && target.type === 'checkbox'
+        ? target.checked
+        : target.value;
 
     setCustomer((current) => ({ ...current, [target.name]: value }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setStatusMessage(`${customer.fullName || 'Customer'} is ready to be saved once the customer mutation is connected.`);
+    setStatusMessage(null);
+
+    try {
+      await createCustomer({
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        email: customer.email,
+        mobileNumber: customer.mobileNumber,
+        alternateNumber: customer.alternateNumber || undefined,
+        companyName: customer.companyName || undefined,
+        taxNumber: customer.taxNumber || undefined,
+        address: customer.address || undefined,
+        preferredCommunicationChannel:
+          customer.preferredCommunicationChannel || undefined,
+        marketingConsent: customer.marketingConsent,
+      });
+
+      setStatusMessage('Customer saved successfully.');
+      setCustomer(initialState);
+    } catch (err) {
+      setStatusMessage(
+        err instanceof Error ? err.message : 'Failed to save customer.',
+      );
+    }
   };
 
   return (
@@ -46,20 +80,30 @@ export function CustomerForm() {
       <CardHeader>
         <CardTitle>Capture customer</CardTitle>
         <CardDescription>
-          Add customer details for the tenant workspace. The form is ready for the server action integration.
+          Add customer details for the tenant workspace. The form is ready for
+          the server action integration.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormField id="fullName" label="Full name">
+            <FormField id="firstName" label="First name">
               <Input
-                autoComplete="name"
-                id="fullName"
-                name="fullName"
+                id="firstName"
+                name="firstName"
                 onChange={handleChange}
                 required
-                value={customer.fullName}
+                value={customer.firstName}
+              />
+            </FormField>
+
+            <FormField id="lastName" label="Last name">
+              <Input
+                id="lastName"
+                name="lastName"
+                onChange={handleChange}
+                required
+                value={customer.lastName}
               />
             </FormField>
 
@@ -125,7 +169,10 @@ export function CustomerForm() {
             />
           </FormField>
 
-          <FormField id="preferredCommunicationChannel" label="Preferred communication channel">
+          <FormField
+            id="preferredCommunicationChannel"
+            label="Preferred communication channel"
+          >
             <select
               className="h-10 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               id="preferredCommunicationChannel"
@@ -149,12 +196,16 @@ export function CustomerForm() {
               type="checkbox"
             />
             <span>
-              Customer consents to receive operational and marketing communications where legally allowed.
+              Customer consents to receive operational and marketing
+              communications where legally allowed.
             </span>
           </label>
 
           {statusMessage ? (
-            <p aria-live="polite" className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+            <p
+              aria-live="polite"
+              className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground"
+            >
               {statusMessage}
             </p>
           ) : null}
@@ -163,7 +214,11 @@ export function CustomerForm() {
             <Button type="submit" variant="accent">
               Save customer
             </Button>
-            <Button onClick={() => setCustomer(initialState)} type="button" variant="outline">
+            <Button
+              onClick={() => setCustomer(initialState)}
+              type="button"
+              variant="outline"
+            >
               Reset
             </Button>
           </FormActions>

@@ -1,18 +1,26 @@
 'use client';
 
+import type { Route } from 'next';
 import { useEffect, useMemo, useState } from 'react';
 
+import { StatusBadge } from '@/components/common/statusBadge';
 import {
   EmptyState,
   ResponsiveTable,
   tableCellClassName,
   tableHeadClassName,
 } from '@/components/data-display';
-import { StatusBadge } from '@/components/common/statusBadge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { fetchCustomers } from '@/lib/apiClient';
 import type { Customer } from '@/types/customers';
+import { useRouter } from 'next/navigation';
 
 function getCustomerName(customer: Customer) {
   const name = `${customer.firstName ?? ''} ${customer.lastName ?? ''}`.trim();
@@ -24,6 +32,7 @@ export function CustomerList() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     const loadCustomers = async () => {
@@ -34,7 +43,11 @@ export function CustomerList() {
         const data = await fetchCustomers();
         setCustomers(data.customers);
       } catch (fetchError) {
-        setError(fetchError instanceof Error ? fetchError.message : 'Unable to load customer directory.');
+        setError(
+          fetchError instanceof Error
+            ? fetchError.message
+            : 'Unable to load customer directory.',
+        );
       } finally {
         setLoading(false);
       }
@@ -51,7 +64,12 @@ export function CustomerList() {
     }
 
     return customers.filter((customer) =>
-      [getCustomerName(customer), customer.email, customer.phone, customer.status]
+      [
+        getCustomerName(customer),
+        customer.email,
+        customer.phone,
+        customer.status,
+      ]
         .filter(Boolean)
         .some((value) => value?.toLowerCase().includes(search)),
     );
@@ -63,7 +81,8 @@ export function CustomerList() {
         <div>
           <CardTitle>Customer directory</CardTitle>
           <CardDescription>
-            Search tenant customers and verify contact details before opening a service request.
+            Search tenant customers and verify contact details before opening a
+            service request.
           </CardDescription>
         </div>
         <div className="w-full md:max-w-xs">
@@ -107,8 +126,16 @@ export function CustomerList() {
             </thead>
             <tbody className="divide-y divide-border">
               {filteredCustomers.map((customer) => (
-                <tr className="transition hover:bg-muted/40" key={customer.id}>
-                  <td className={`${tableCellClassName} font-semibold text-foreground`}>
+                <tr
+                  className=" cursor-pointer transition hover:bg-muted/40"
+                  key={customer.id}
+                  onClick={() =>
+                    router.push(`/station/customers/${customer.id}` as Route)
+                  }
+                >
+                  <td
+                    className={`${tableCellClassName} font-semibold text-foreground`}
+                  >
                     {getCustomerName(customer)}
                   </td>
                   <td className={`${tableCellClassName} text-muted-foreground`}>
@@ -118,7 +145,13 @@ export function CustomerList() {
                     {customer.phone ?? '—'}
                   </td>
                   <td className={tableCellClassName}>
-                    <StatusBadge tone={(customer.status ?? 'Active') === 'Pending' ? 'warning' : 'success'}>
+                    <StatusBadge
+                      tone={
+                        (customer.status ?? 'Active') === 'Pending'
+                          ? 'warning'
+                          : 'success'
+                      }
+                    >
                       {customer.status ?? 'Active'}
                     </StatusBadge>
                   </td>

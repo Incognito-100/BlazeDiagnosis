@@ -1,5 +1,8 @@
-import { headers } from 'next/headers';
+import { db } from '@/db/client';
+import { tenantDomains } from '@/db/schema/tenants';
 import { requireUser } from '@/lib/auth/session';
+import { eq } from 'drizzle-orm';
+import { headers } from 'next/headers';
 
 export type TenantContext = {
   tenantId: string;
@@ -25,6 +28,19 @@ export async function resolveTenantFromRequest(): Promise<TenantContext | null> 
   }
 
   // TODO: Resolve tenant from tenant_domains table using host.
+  // Did the Resolve tenant from tenant domains.
+  const match = await db
+    .select()
+    .from(tenantDomains)
+    .where(eq(tenantDomains.domain, host))
+    .limit(1);
+
+  if (match.length > 0) {
+    return {
+      tenantId: match[0].tenantId,
+      source: 'host',
+    };
+  }
   return null;
 }
 
@@ -49,7 +65,10 @@ export async function requireTenantContext(): Promise<TenantContext> {
 }
 
 // ✅ Cross-tenant access guard
-export function assertSameTenant(resourceTenantId: string, context: TenantContext) {
+export function assertSameTenant(
+  resourceTenantId: string,
+  context: TenantContext,
+) {
   if (resourceTenantId !== context.tenantId) {
     throw new Error('Cross-tenant access denied.');
   }

@@ -121,8 +121,17 @@ export async function deleteCustomer(tenantId: string, customerId: string) {
   await requireTenantPermission(tenantId, 'customers.write');
 
   await db
-    .delete(customers)
-    .where(and(eq(customers.tenantId, tenantId), eq(customers.id, customerId)));
+    .update(customers)
+    .set({
+      isArchived: true,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(customers.tenantId, tenantId),
+         eq(customers.id, customerId)
+        )
+      );
 }
 
 

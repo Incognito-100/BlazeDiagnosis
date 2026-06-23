@@ -13,7 +13,21 @@ export type AuthenticatedUser = {
 export const getCurrentUser = cache(
   async (): Promise<AuthenticatedUser | null> => {
     // TODO: Replace with production auth provider session lookup.
-    return null;
+    return {
+      id: 'dev-user-id',
+      email: 'dev@station.local',
+      activeTenantId: null, // keep null so the dev fallback tenant kicks in
+      roles: ['platform_admin'] as SystemRole[],
+      permissions: [
+        'platform.tenants.manage',
+        'customers.read',
+        'customers.write',
+        'customers.delete',
+        'vehicles.read',
+        'vehicles.write',
+        'vehicles.delete',
+      ] as Permission[],
+    };
   },
 );
 

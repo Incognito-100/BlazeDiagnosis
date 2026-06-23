@@ -12,7 +12,8 @@ export type CustomerFormState = {
   alternateNumber: string;
   companyName: string;
   email: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   marketingConsent: boolean;
   mobileNumber: string;
   preferredCommunicationChannel: string;

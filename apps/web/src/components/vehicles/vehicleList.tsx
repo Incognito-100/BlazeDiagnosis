@@ -1,6 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { requestJson } from '@/lib/apiClient';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { StatusBadge } from '@/components/common/statusBadge';
 import {
@@ -9,51 +11,22 @@ import {
   tableCellClassName,
   tableHeadClassName,
 } from '@/components/data-display';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
 import type { VehicleRecord } from '@/types/vehicles';
+import type { Route } from 'next';
 
-const demoVehicles: VehicleRecord[] = [
-  {
-    fuel: 'Petrol',
-    id: '1',
-    make: 'Toyota',
-    model: 'Camry',
-    registration: 'ABC 123 GP',
-    status: 'Pending',
-    transmission: 'Automatic',
-    variant: 'LE',
-    vin: '1HGBH41JXMN109186',
-    year: '2020',
-  },
-  {
-    fuel: 'Petrol',
-    id: '2',
-    make: 'Honda',
-    model: 'Civic',
-    registration: 'DEF 456 GP',
-    status: 'Completed',
-    transmission: 'Manual',
-    variant: 'EX',
-    vin: '2T1BURHE9JC234567',
-    year: '2019',
-  },
-  {
-    fuel: 'Diesel',
-    id: '3',
-    make: 'Ford',
-    model: 'Ranger',
-    registration: 'GHI 789 GP',
-    status: 'In service',
-    transmission: 'Automatic',
-    variant: 'XLT',
-    vin: '3N1AB6AP5BL789012',
-    year: '2021',
-  },
-];
-
-const statusTone: Record<VehicleRecord['status'], 'neutral' | 'success' | 'warning'> = {
+const statusTone: Record<
+  VehicleRecord['status'],
+  'neutral' | 'success' | 'warning'
+> = {
   Completed: 'success',
   'In service': 'neutral',
   Pending: 'warning',
@@ -61,15 +34,43 @@ const statusTone: Record<VehicleRecord['status'], 'neutral' | 'success' | 'warni
 
 export function VehicleList() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [vehicles, setVehicles] = useState<VehicleRecord[]>([]); // added
+  const [loading, setLoading] = useState(true); // added
+  const [error, setError] = useState<string | null>(null); //added
+  const router = useRouter();
+
+  // added: fetch real vehicles on mount
+  useEffect(() => {
+    const loadVehicles = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await requestJson<{ vehicles: VehicleRecord[] }>(
+          '/api/vehicles',
+          {
+            errorMessage: 'Failed to load vehicles.',
+          },
+        );
+        setVehicles(data.vehicles);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to load vehicles.',
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    void loadVehicles();
+  }, []);
 
   const filteredVehicles = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
 
     if (!query) {
-      return demoVehicles;
+      return vehicles;
     }
 
-    return demoVehicles.filter((vehicle) =>
+    return vehicles.filter((vehicle) =>
       [
         vehicle.registration,
         vehicle.vin,
@@ -82,7 +83,34 @@ export function VehicleList() {
         vehicle.status,
       ].some((value) => value.toLowerCase().includes(query)),
     );
-  }, [searchQuery]);
+  }, [searchQuery, vehicles]);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="pt-6 text-sm text-muted-foreground">
+          Loading vehicles...
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-start gap-3 pt-6">
+          <p className="text-sm text-destructive">{error}</p>
+          <button
+            className="text-sm underline text-muted-foreground hover:text-foreground"
+            onClick={() => window.location.reload()}
+            type="button"
+          >
+            Retry
+          </button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -90,7 +118,8 @@ export function VehicleList() {
         <div>
           <CardTitle>Vehicle directory</CardTitle>
           <CardDescription>
-            Search active vehicles by registration, VIN, make, model, fuel type, or status.
+            Search active vehicles by registration, VIN, make, model, fuel type,
+            or status.
           </CardDescription>
         </div>
         <div className="w-full md:max-w-sm">
@@ -121,19 +150,22 @@ export function VehicleList() {
             </thead>
             <tbody className="divide-y divide-border">
               {filteredVehicles.map((vehicle) => (
-                <tr className="transition hover:bg-muted/40" key={vehicle.id}>
+                <tr className="transition hover:bg-muted/40" key={vehicle.id} onClick={() => router.push(`/station/vehicles/${vehicle.id}` as Route)}>
                   <td className={tableCellClassName}>
                     <div className="font-semibold text-foreground">
                       {vehicle.make} {vehicle.model}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {vehicle.variant} • {vehicle.year} • {vehicle.transmission}
+                      {vehicle.variant} • {vehicle.year} •{' '}
+                      {vehicle.transmission}
                     </div>
                   </td>
                   <td className={`${tableCellClassName} font-mono text-sm`}>
                     {vehicle.registration}
                   </td>
-                  <td className={`${tableCellClassName} font-mono text-xs text-muted-foreground`}>
+                  <td
+                    className={`${tableCellClassName} font-mono text-xs text-muted-foreground`}
+                  >
                     {vehicle.vin}
                   </td>
                   <td className={`${tableCellClassName} text-muted-foreground`}>
