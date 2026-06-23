@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Customer {
@@ -37,9 +37,9 @@ interface Quote {
 }
 //Displays all details for a customer(vehicles,jobs and quotes) fetched from an api
 export default function CustomerDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const customerId = id ? parseInt(id) : null;
+  const  params = useParams();
+  const router = useRouter();
+  const customerId = params?.id ? parseInt(params.id as string) : null;
 //Tracks wether a page is still loading and holds errors,declares state for customer data,vehicles,jobs and quotes
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -104,7 +104,7 @@ export default function CustomerDetailPage() {
       <div className="flex justify-between items-start">
         <div>
           <button
-            onClick={() => navigate("/customers")}
+            onClick={() => router.push("/customers")}
             className="text-blue-600 hover:underline mb-2 block"
           >
             ← Back to Customers
@@ -122,7 +122,7 @@ export default function CustomerDetailPage() {
         <div className="flex gap-3">
           {!customer.archived && (
             <button
-              onClick={() => navigate(`/customers/${customerId}/edit`)}
+              onClick={() => router.push("/customers")}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
             >
               Edit
