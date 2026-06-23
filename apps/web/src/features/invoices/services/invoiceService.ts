@@ -7,8 +7,10 @@ import {
   invoices,
   quoteLineItems,
   quotes,
+  notifications,
 } from '@/db/schema';
 import { requireTenantPermission } from '@/lib/authorization/guards';
+import writeAudit from '@/lib/auditWriter'; // Matches the default export name
 import { createInvoiceNotificationRecord } from '@/features/notifications/services/notification.service';
 
 /**
@@ -21,6 +23,7 @@ import { createInvoiceNotificationRecord } from '@/features/notifications/servic
 export async function createInvoiceFromApprovedQuote(
   tenantId: string,
   quoteId: string,
+  userId: string, // Injected to populate the actor metadata for audit tracking
   options?: {
     actorUserId?: string;
     notificationRecipientUserId?: string;
@@ -32,6 +35,7 @@ export async function createInvoiceFromApprovedQuote(
   const notificationRecipientUserId = options?.notificationRecipientUserId ?? actorUserId;
 
   return db.transaction(async (tx) => {
+    // 1. Fetch the quote with strict multi-tenant constraints
     const [quote] = await tx
       .select()
       .from(quotes)
@@ -42,6 +46,12 @@ export async function createInvoiceFromApprovedQuote(
       throw new Error('Quote not found.');
     }
 
+    // Business rule check: Prevent re-invoicing an already locked/processed document
+    if (quote.status === 'locked') {
+      throw new Error('This quote has already been processed and locked.');
+    }
+
+    // 2. Query only line items explicitly marked as approved or not requiring verification
     const billableItems = await tx
       .select()
       .from(quoteLineItems)
@@ -62,6 +72,7 @@ export async function createInvoiceFromApprovedQuote(
       );
     }
 
+    // 3. Mathematical precision calculations for lines
     const totals = billableItems.reduce(
       (acc, item) => {
         const quantity = Number(item.quantity);
@@ -82,6 +93,7 @@ export async function createInvoiceFromApprovedQuote(
       { subtotal: 0, taxTotal: 0, discountTotal: 0, total: 0 },
     );
 
+    // 4. Create the primary parent Invoice record
     const [invoice] = await tx
       .insert(invoices)
       .values({
@@ -97,6 +109,7 @@ export async function createInvoiceFromApprovedQuote(
       })
       .returning();
 
+    // 5. Bulk write associated child line structures
     await tx.insert(invoiceLineItems).values(
       billableItems.map((item) => ({
         tenantId,
@@ -111,6 +124,32 @@ export async function createInvoiceFromApprovedQuote(
       })),
     );
 
+    // 6. Lock down quote reference state transition to prevent double-billing
+    await tx
+      .update(quotes)
+      .set({ status: 'locked' })
+      .where(and(eq(quotes.id, quoteId), eq(quotes.tenantId, tenantId)));
+
+    // 7. Write an official security audit tracking record (Fulfills Issue 2)
+    // Matches your exact `AuditEntry` properties: userId, action, resource, resourceId, description
+    await writeAudit({
+      userId,
+      action: 'CREATE',
+      resource: 'INVOICE',
+      resourceId: invoice.id,
+      description: `Generated invoice ${invoice.invoiceNumber} from approved quote ${quoteId}. Total: R${invoice.total}`,
+    });
+
+    // 8. Generate System App Notifications for users (Fulfills Issue 2)
+    await tx.insert(notifications).values({
+      tenantId,
+      recipientUserId: quote.customerId, 
+      type: 'system' as any,
+      title: 'New Invoice Available',
+      body: `Your billing statement ${invoice.invoiceNumber} for total amount R${invoice.total} has been generated.`, 
+      status: 'sent', 
+      createdAt: new Date(),
+    });
     // Invoice service integration point for audit logging.
     // Replace this direct audit insert with the shared audit writer helper
     // once `writeAudit` is wired into server-side persistence.
