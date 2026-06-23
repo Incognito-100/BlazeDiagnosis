@@ -49,6 +49,25 @@ This plan documents the invoice generation workflow, schema review, and implemen
 - It calculates `subtotal`, `discountTotal`, `taxTotal`, and `total`
 - It inserts a draft invoice and invoice line items
 
+### Draft: Invoice creation service from approved quote
+- `createInvoiceFromApprovedQuote(tenantId, quoteId)`
+  - validate tenant and user permissions
+  - load quote and ensure quote status is `approved`
+  - fetch approved, billable quote line items
+  - compute each line item total: `quantity * unitPrice`, `lineTax`, `lineDiscount`
+  - aggregate invoice totals: `subtotal`, `discountTotal`, `taxTotal`, `total`
+  - create invoice record with `status: 'draft'`
+  - create invoice line items with `quoteLineItemId` references
+  - return created invoice summary and line items
+
+### Draft: Notification record helper
+- `createInvoiceNotificationRecord(tenantId, invoiceId, recipientUserId, eventType)`
+  - map `eventType` to `title`, `body`, and `channel`
+  - create notification record in `notifications` table
+  - set `status` to `queued`
+  - support `invoice_created`, `invoice_issued`, `invoice_paid`, `invoice_overdue`
+  - optionally enqueue delivery or signal processing for in-app channel
+
 ## Gaps and Next Steps
 - Add audit logging for invoice creation and status changes
 - Add notification creation for invoice events

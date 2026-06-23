@@ -2,18 +2,34 @@ import { and, eq, or } from 'drizzle-orm';
 
 import { db } from '@/db/client';
 import {
+  auditLogs,
   invoiceLineItems,
   invoices,
   quoteLineItems,
   quotes,
 } from '@/db/schema';
 import { requireTenantPermission } from '@/lib/authorization/guards';
+import { createInvoiceNotificationRecord } from '@/features/notifications/services/notification.service';
 
+/**
+ * Draft service: create a new invoice from an approved quote.
+ *
+ * This service reads approved or billable quote line items, calculates
+ * invoice totals, writes the invoice and line items, logs an audit event,
+ * and enqueues a notification for the recipient.
+ */
 export async function createInvoiceFromApprovedQuote(
   tenantId: string,
   quoteId: string,
+  options?: {
+    actorUserId?: string;
+    notificationRecipientUserId?: string;
+  },
 ) {
   await requireTenantPermission(tenantId, 'invoices.create');
+
+  const actorUserId = options?.actorUserId;
+  const notificationRecipientUserId = options?.notificationRecipientUserId ?? actorUserId;
 
   return db.transaction(async (tx) => {
     const [quote] = await tx
@@ -94,6 +110,39 @@ export async function createInvoiceFromApprovedQuote(
         total: item.total,
       })),
     );
+
+    // Invoice service integration point for audit logging.
+    // Replace this direct audit insert with the shared audit writer helper
+    // once `writeAudit` is wired into server-side persistence.
+    await tx.insert(auditLogs).values({
+      tenantId,
+      actorUserId,
+      action: 'CREATE',
+      entityType: 'INVOICE',
+      entityId: invoice.id,
+      newValue: {
+        invoiceNumber: invoice.invoiceNumber,
+        status: invoice.status,
+        subtotal: invoice.subtotal,
+        taxTotal: invoice.taxTotal,
+        discountTotal: invoice.discountTotal,
+        total: invoice.total,
+        quoteId,
+        jobCardId: quote.jobCardId,
+      },
+    });
+
+    if (notificationRecipientUserId) {
+      await createInvoiceNotificationRecord(
+        {
+          tenantId,
+          recipientUserId: notificationRecipientUserId,
+          invoiceId: invoice.id,
+          eventType: 'invoice_created',
+        },
+        tx,
+      );
+    }
 
     return invoice;
   });

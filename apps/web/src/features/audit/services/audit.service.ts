@@ -19,6 +19,21 @@ export async function writeAuditLog(input: {
   return auditLog;
 }
 
+export async function writeAuditEvent(input: {
+  tenantId?: string;
+  actorUserId?: string;
+  action: string;
+  entityType: string;
+  entityId?: string;
+  previousValue?: Record<string, unknown> | null;
+  newValue?: Record<string, unknown> | null;
+  ipAddress?: string;
+  userAgent?: string;
+  requestId?: string;
+}) {
+  return writeAuditLog(input);
+}
+
 export async function searchAuditLogs(tenantId: string) {
   return db
     .select()
