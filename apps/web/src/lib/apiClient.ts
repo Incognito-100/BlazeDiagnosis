@@ -90,11 +90,11 @@ export async function updateCustomer(customerId: string, customerData: unknown) 
     method: 'DELETE',
     errorMessage: 'Failed to delete customer.',
   });
-}
+}*/
 
 export async function deleteVehicle(vehicleId: string) {
   return requestJson<{ id: string; message: string }>(`/api/vehicles/${vehicleId}`, {
     method: 'DELETE',
     errorMessage: 'Failed to delete vehicle.',
   });
-}*/
+}
