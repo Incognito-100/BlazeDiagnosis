@@ -12,9 +12,13 @@ export async function GET(_request: Request, { params }: ApiRouteContext) {
   try {
     const { id } = await params;
     const tenant = await requireTenantContext();
-    const vehicle = await listVehiclesForCustomer(tenant.tenantId, id);
+    const vehicle = await getVehiclesByID(tenant.tenantId, id);
 
-    return apiOk({ vehicle }, { meta: { count: vehicle.length } });
+    if (!vehicle){
+      return apiError('NOT_FOUND', 'Vehicle not found.', 404, { id });
+    }
+
+    return apiOk({ vehicle });
   } catch (error) {
     return handleApiError(`GET ${routeName}`, error);
   }
