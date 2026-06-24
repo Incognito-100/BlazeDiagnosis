@@ -66,6 +66,7 @@ export async function createVehicle(vehicleData: unknown) {
   });
 }
 
+
 export async function createCustomer(customerData: unknown) {
   return requestJson<Customer>(`/api/customers`, {
     method: 'POST',
@@ -84,6 +85,16 @@ export async function updateCustomer(customerId: string, customerData: unknown) 
     errorMessage: 'Failed to update customer profile data.',
   });
 }
+
+export async function updateVehicle(vehicleId: string, vehicleData: unknown) {
+  return requestJson<{ vehicle: unknown }>(`/api/vehicles/${vehicleId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(vehicleData),
+    errorMessage: 'Failed to update vehicle.',
+  });
+}
+
 export async function deleteCustomer(customerId: string) {
   return requestJson<{ id: string; message: string }>(`/api/customers/${customerId}`, {
     method: 'DELETE',
